@@ -9,4 +9,8 @@ Use hooks
 
 ### Todos
 
-☐ Update todos
+☑︎ Update todos  
+☑︎ Create components  
+☐ Implement encipher/decipher  
+☑︎ Implement frequency analysis  
+☐ Allow editing  
