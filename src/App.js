@@ -10,6 +10,17 @@ import Options from './components/Options'
 const App = () => {
   const examplekey = 'zebracdfghijklmnopqstuvwxy'
   // State variables
+  const [decipherkey, setDecipherkey] = useState({});
+  useEffect(() => {
+    const examplekeyArr = examplekey.split('');
+    let newDecipherKey = {};
+    examplekeyArr.map((char, index) => {
+      newDecipherKey = {...newDecipherKey, [char]: String.fromCharCode(97+index)};
+      return char;
+    });
+    setDecipherkey(newDecipherKey);
+  }, []);
+
   const [cipherkey, setCipherkey] = useState({
     a: '',
     b: '',
@@ -54,7 +65,7 @@ const App = () => {
   const [input, setInput] = useState("");
   //On input update, update output;
   useEffect(() => {
-    setOutput(preAnalPrep(input));
+    setOutput(decipher(preAnalPrep(input)));
   }, [input]);
 
   const [output, setOutput] = useState("");
@@ -65,10 +76,18 @@ const App = () => {
 
   // Apply 'options' to text, prior to analysis ie scrub/sanitise text
   const preAnalPrep = text => {
-    const arrNewOutput = text.toLowerCase().split('')
+    const textInArr = text.toLowerCase().split('')
       .filter(char => Object.keys(cipherkey).includes(char)); // Only chars that appear in cipherkey is included
-    const newOut = arrNewOutput.join('');
-    return newOut;
+    const textOut = textInArr.join('');
+    return textOut;
+  }
+
+  // Decipher
+  const decipher = text => {
+    const textInArr = text.split('');
+    const textOutArr = textInArr.map(char => decipherkey[char]);
+    const textOut = textOutArr.join('');
+    return textOut;
   }
 
   //Function to analyse input and output
