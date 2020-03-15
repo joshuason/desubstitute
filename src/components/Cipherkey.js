@@ -1,8 +1,14 @@
 import React from 'react';
+import KeyComponent from './KeyComponent';
 
-const Cipherkey = ({ cipherkey }) => {
+const Cipherkey = ({ cipherkey, setCipherkey }) => {
   const ckArray = Object.entries(cipherkey);
   //console.log('cipherkey', ckArray);
+  const onChange = (e, keyId) => {
+    const { value } = e.target;
+    console.log(`${keyId}: ${value}`);
+    cipherkey[keyId] = value;
+  }
 
   return (
     <div id="Cipherkey">
@@ -10,9 +16,14 @@ const Cipherkey = ({ cipherkey }) => {
       <div id="Ciphertable">
         {
           (cipherkey)
-          ? ckArray.map(key => {
-              return <span key={key[0]}>{key[0]}: {key[1]} | </span>
-            })
+          ? ckArray.map(key => (
+            <KeyComponent
+              key={key[0]}
+              keyOfValue={key[0]}
+              value={key[1]}
+              onChange={e => onChange(e, key[0])}
+            />
+            ))
           : null
         }
       </div>
