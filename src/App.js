@@ -146,7 +146,7 @@ const App = () => {
         onChange={value => setOutput(value)}
       />
       <Textarea
-        value={output}
+        value={input}
       //  onChange={value => setTextarea(value)}
       />
       <Notifications />

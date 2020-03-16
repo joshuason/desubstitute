@@ -1,24 +1,42 @@
 import React, { useState, useEffect } from 'react';
 
 const Textarea = ({value, onChange}) => {
-/*
+
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
+  const [textarea, setTextarea] = useState("");
+/*
   const [selection, setSelection] = useState({});
 */
-
-  const [textarea, setTextarea] = useState("");
   useEffect(() => {
     setTextarea(value);
   }, [value]);
 
-  const onMouseMove = (e) => {
-    console.log(e);
+  useEffect(() => {
+    setHighlight({chars: null, isValid: false});
+  }, [textarea]);
+
+  useEffect(() => {
+    if (!highlight.isValid) {
+      return;
+    }
+  }, [highlight]);
+
+  const handleSelect = e => {
+    const {selectionStart, selectionEnd} = e.target;
+    const selected = textarea.substring(selectionStart, selectionEnd);
+    console.log(selectionStart, selectionEnd, selected);
+    setHighlight({chars: selected, isValid: (selected.length !== 0)});
+  }
+
+  const handleChange = e => {
+    const { value } = e.target;
+    setTextarea(value);
   }
 
   return (
     <div id="Textarea">
     Textarea:
-      <div class="container">
+      <div className="container">
         <div
           className="textarea"
           style={textboxStyle}>
@@ -27,7 +45,9 @@ const Textarea = ({value, onChange}) => {
         <textarea
           value={textarea}
           style={textareaStyle}
-          onMouseMove={e => onMouseMove(e)}
+          onChange={e => handleChange(e)}
+          onClick={e => handleSelect(e)}
+          onBlur={() => setHighlight({chars: null, isValid: false})}
         />
       </div>
     </div>
@@ -38,7 +58,7 @@ const textboxStyle = {
   position: "relative",
   top: "0",
   left: "0",
-  width: "100%",
+  maxWidth: "100%",
   height: "150px",
   margin: "0",
   borderRadius: "0",
@@ -46,7 +66,10 @@ const textboxStyle = {
   textAlign: "left",
   fontFamily: "courier",
   fontSize: "13px",
-  overflow: "auto"
+  overflowY: "auto",
+  overflowX: "hidden",
+  whiteSpace: "pre-wrap",
+  wordWrap: "break-word",
 }
 
 const textareaStyle = {
@@ -62,6 +85,8 @@ const textareaStyle = {
   fontFamily: "courier",
   fontSize: "13px",
   backgroundColor: "rgba(255, 255, 255, 0)",
+  color: "rgba(255, 255, 255, 0)",
+  caretColor: "rgba(0, 0, 0, 100)",
 }
 
 export default Textarea;
