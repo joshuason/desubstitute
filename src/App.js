@@ -128,11 +128,8 @@ const App = () => {
     }
 
     setOutput(decipher(curOutput));
-    setTextarea(decipher(curOutput))
+//    setTextarea(decipher(curOutput))
   }, [output, cipherkey]);
-
-  const [textarea, setTextarea] = useState("");
-  
 
   return (
     <div className="App">
@@ -149,8 +146,8 @@ const App = () => {
         onChange={value => setOutput(value)}
       />
       <Textarea
-        value={textarea}
-        onChange={value => setTextarea(value)}
+        value={output}
+      //  onChange={value => setTextarea(value)}
       />
       <Notifications />
       <Options />
