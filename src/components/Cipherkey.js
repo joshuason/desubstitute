@@ -7,7 +7,7 @@ const Cipherkey = ({ cipherkey, setCipherkey }) => {
   const onChange = (e, keyId) => {
     const { value } = e.target;
     console.log(`${keyId}: ${value}`);
-    cipherkey[keyId] = value;
+    setCipherkey({...cipherkey, [keyId]: value});
   }
 
   return (

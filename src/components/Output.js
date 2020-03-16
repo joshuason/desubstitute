@@ -1,6 +1,14 @@
 import React from 'react';
 
 const Output = props => {
+  const onClick = () => {
+
+  }
+
+  const onChange = () => {
+
+  }
+
   return (
     <div id="Output">
       <label>

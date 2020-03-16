@@ -19,7 +19,7 @@ const PARAM_STRING = 's=';
 const App = () => {
   //const examplekey = 'zebracdfghijklmnopqstuvwxy'
   // State variables
-  const [_cipherkey, set_Cipherkey] = useState({});
+  const [_cipherkey, set_cipherkey] = useState({});
 
   const [cipherkey, setCipherkey] = useState({
     a: '',
@@ -52,38 +52,14 @@ const App = () => {
   //On key update, update output;
 
   useEffect(() => {
-    /*
-    const arrExamplekey = examplekey.split('');
-    const k = cipherkey;
-    Object.keys(cipherkey).map((key, value) => {
-      k[key] = arrExamplekey[value];
-      return key;
-    });
-    setCipherkey(k);
-    */
+
   }, [cipherkey]);
 
   const [input, setInput] = useState("");
   //On input update, update output;
   useEffect(() => {
-    // Decipher
-    const decipher = text => {
-      const textInArr = text.split('');
-      const textOutArr = textInArr.map(char =>
-        (cipherkey[char])
-        ? cipherkey[char]
-        : char
-      );
-      const textOut = textOutArr.join('');
-      return textOut;
-    }
+    setOutput(input);
 
-    setOutput(decipher(input));
-  }, [input, cipherkey]);
-
-  const [output, setOutput] = useState("");
-  //On output update, update key;
-  useEffect(() => {
     // Apply 'options' to text, prior to analysis ie scrub/sanitise text
     const preAnalPrep = text => {
       const textInArr = text.toLowerCase().split('')
@@ -131,13 +107,33 @@ const App = () => {
     }
 
     console.log(analyseText(preAnalPrep(input)).fanalysis);
-  }, [cipherkey, input]);
+  }, [input, cipherkey]);
+
+  const [output, setOutput] = useState("");
+  //On output update, update key;
+  useEffect(() => {
+    const curOutput = output;
+
+    // Decipher
+    const decipher = text => {
+      const textInArr = text.split('');
+      const textOutArr = textInArr.map(char =>
+        (cipherkey[char.toLowerCase()])
+        ? cipherkey[char.toLowerCase()]
+        : char
+      );
+      const textOut = textOutArr.join('');
+      return textOut;
+    }
+
+    setOutput(decipher(curOutput));
+  }, [output, cipherkey]);
 
   return (
     <div className="App">
       <Cipherkey
         cipherkey={cipherkey}
-        setCipher={setCipherkey}
+        setCipherkey={setCipherkey}
       />
       <Input
         value={input}
