@@ -7,6 +7,7 @@ import Input from './components/Input';
 import Output from './components/Output';
 import Notifications from './components/Notifications';
 import Options from './components/Options';
+import Textarea from './components/Textarea';
 /*
 const PATH_BASE = 'https://api.datamuse.com';
 const PATH_WORDS = '/words';
@@ -127,7 +128,11 @@ const App = () => {
     }
 
     setOutput(decipher(curOutput));
+    setTextarea(decipher(curOutput))
   }, [output, cipherkey]);
+
+  const [textarea, setTextarea] = useState("");
+  
 
   return (
     <div className="App">
@@ -142,6 +147,10 @@ const App = () => {
       <Output
         value={output}
         onChange={value => setOutput(value)}
+      />
+      <Textarea
+        value={textarea}
+        onChange={value => setTextarea(value)}
       />
       <Notifications />
       <Options />

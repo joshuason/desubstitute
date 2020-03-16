@@ -13,7 +13,7 @@ html, body {
 }
 
 
-#Input, #Output {
+#Input, #Output, #Textarea {
   box-sizing: border-box;
   width: 300px;
   height: 150px;
