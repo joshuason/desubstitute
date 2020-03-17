@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Textarea = ({value, onChange}) => {
+const Textarea = ({value, title, onChange}) => {
 
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
   const [textarea, setTextarea] = useState("");
@@ -32,6 +32,7 @@ const Textarea = ({value, onChange}) => {
   const handleChange = e => {
     const { value } = e.target;
     setTextarea(value);
+    onChange(value);
   }
 
   const highlighted = () => {
@@ -57,7 +58,7 @@ const Textarea = ({value, onChange}) => {
 
   return (
     <div id="Textarea">
-    Textarea:
+    {title}
       <div className="container">
         <div
           ref={highlightDiv}

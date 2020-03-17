@@ -1,23 +1,14 @@
 import React from 'react';
 
-const Output = props => {
-  const onClick = () => {
-
-  }
-
-  const onChange = () => {
-
-  }
+const Output = ({value}) => {
 
   return (
     <div id="Output">
       <label>
         Output:
-        <textarea
-          type="text"
-          value={props.value}
-          onChange={e => props.onChange(e.target.value)}
-        />
+        <div style={{textAlign: "left", paddingTop: "1rem"}}>
+          {value}
+        </div>
       </label>
     </div>
   );

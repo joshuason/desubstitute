@@ -20,8 +20,6 @@ const PARAM_STRING = 's=';
 const App = () => {
   //const examplekey = 'zebracdfghijklmnopqstuvwxy'
   // State variables
-  const [_cipherkey, set_cipherkey] = useState({});
-
   const [cipherkey, setCipherkey] = useState({
     a: '',
     b: '',
@@ -51,11 +49,11 @@ const App = () => {
     z: '',
   });
   //On key update, update output;
-
+/*
   useEffect(() => {
 
   }, [cipherkey]);
-
+*/
   const [input, setInput] = useState("");
   //On input update, update output;
   useEffect(() => {
@@ -141,13 +139,13 @@ const App = () => {
         value={input}
         onChange={value => setInput(value)}
       />
-      <Output
-        value={output}
-        onChange={value => setOutput(value)}
-      />
       <Textarea
         value={input}
-      //  onChange={value => setTextarea(value)}
+        onChange={value => setOutput(value)}
+        title={"Workarea:"}
+      />
+      <Output
+        value={output}
       />
       <Notifications />
       <Options />
