@@ -4,6 +4,7 @@ const Textarea = ({value, onChange}) => {
 
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
   const [textarea, setTextarea] = useState("");
+  const highlightDiv = React.createRef();
 /*
   const [selection, setSelection] = useState({});
 */
@@ -33,14 +34,45 @@ const Textarea = ({value, onChange}) => {
     setTextarea(value);
   }
 
+  const highlighted = () => {
+    let ta = textarea;
+    let arr = [];
+    let i = 0;
+    while (highlight.isValid && ta.includes(highlight.chars)) {
+      let index = ta.indexOf(highlight.chars);
+      let pre = ta.substring(0, index);
+      (pre.length) ? arr.push(pre, highlight.chars) : arr.push(highlight.chars);
+      ta = ta.substring(index + highlight.chars.length);
+      console.log('while:', i++);
+    }
+    (ta.length) && arr.push(ta);
+    return arr;
+  }
+
+  const handleScroll = (e) => {
+    var scrollTop = e.target.scrollTop;
+    //console.log(scrollTop);
+    highlightDiv.current.scrollTop = scrollTop;
+  }
+
   return (
     <div id="Textarea">
     Textarea:
       <div className="container">
         <div
+          ref={highlightDiv}
           className="textarea"
-          style={textboxStyle}>
-          {textarea}
+          style={textboxStyle}
+        >
+          {
+            (highlight.isValid)
+            ? highlighted().map((word, index) => {
+                if (word === highlight.chars)
+                  return <span key={word+index} style={{backgroundColor: "yellow"}}>{word}</span>
+                return word
+              })
+            : textarea
+          }
         </div>
         <textarea
           value={textarea}
@@ -48,6 +80,7 @@ const Textarea = ({value, onChange}) => {
           onChange={e => handleChange(e)}
           onClick={e => handleSelect(e)}
           onBlur={() => setHighlight({chars: null, isValid: false})}
+          onScroll={(e) => handleScroll(e)}
         />
       </div>
     </div>
@@ -70,6 +103,7 @@ const textboxStyle = {
   overflowX: "hidden",
   whiteSpace: "pre-wrap",
   wordWrap: "break-word",
+  color: "rgba(255, 255, 255, 0)",
 }
 
 const textareaStyle = {
@@ -85,8 +119,7 @@ const textareaStyle = {
   fontFamily: "courier",
   fontSize: "13px",
   backgroundColor: "rgba(255, 255, 255, 0)",
-  color: "rgba(255, 255, 255, 0)",
-  caretColor: "rgba(0, 0, 0, 100)",
+  cursor: "text",
 }
 
 export default Textarea;
