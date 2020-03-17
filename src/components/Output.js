@@ -6,12 +6,18 @@ const Output = ({value}) => {
     <div id="Output">
       <label>
         Output:
-        <div style={{textAlign: "left", paddingTop: "1rem"}}>
+        <div style={outputStyle}>
           {value}
         </div>
       </label>
     </div>
   );
+}
+
+const outputStyle = {
+  textAlign: "left",
+  paddingTop: "1rem",
+  wordWrap: "break-word",
 }
 
 export default Output;

@@ -19,6 +19,7 @@ const PARAM_STRING = 's=';
 */
 const App = () => {
   //const examplekey = 'zebracdfghijklmnopqstuvwxy'
+
   // State variables
   const [cipherkey, setCipherkey] = useState({
     a: '',
@@ -48,27 +49,39 @@ const App = () => {
     y: '',
     z: '',
   });
-  //On key update, update output;
-/*
-  useEffect(() => {
-
-  }, [cipherkey]);
-*/
   const [input, setInput] = useState("");
-  //On input update, update output;
-  useEffect(() => {
-    setOutput(input);
+  const [workarea, setWorkarea] = useState("");
+  const [output, setOutput] = useState("");
 
-    // Apply 'options' to text, prior to analysis ie scrub/sanitise text
+  //On input update, update workarea and initialise key, analyse characters;
+  useEffect(() => {
+
+    // Apply 'options' to text, prior to analysis ie scrub/sanitise text, returns string
     const preAnalPrep = text => {
       const textInArr = text.toLowerCase().split('')
-        .filter(char => Object.keys(cipherkey).includes(char)); // Only chars that appear in cipherkey is included
+        // Only chars that appear in cipherkey is included
+        .filter(char => Object.keys(cipherkey).includes(char));
       const textOut = textInArr.join('');
       return textOut;
     }
 
-    //Function to analyse input and output
+    // Analyse input, returns objects
     const analyseText = text => {
+      // Single char frequencey analysis
+      const frequencyAnalysis = text => {
+        const newObj = {};
+        text.split('')
+          // Only chars that appear in cipherkey is counted (filter may be redundant)
+          // .filter(char => Object.keys(cipherkey).includes(char))
+          .map(char => {
+            (newObj[char])
+            ? newObj[char] += (1 / text.length)
+            : newObj[char] = (1 / text.length);
+            return char;
+          });
+        return newObj;
+      }
+
       const fanalysis = frequencyAnalysis(text);
       /*
       const digraphs = searchDigraphs(text);
@@ -90,30 +103,8 @@ const App = () => {
         */
       };
     }
+    //console.log(analyseText(preAnalPrep(input)).fanalysis);
 
-    const frequencyAnalysis = text => {
-      const newObj = {};
-      text.split('')
-        // Only chars that appear in cipherkey is counted (filter may be redundant)
-        // .filter(char => Object.keys(cipherkey).includes(char))
-        .map(char => {
-          (newObj[char])
-          ? newObj[char] += (1 / text.length)
-          : newObj[char] = (1 / text.length);
-          return char;
-        });
-      return newObj;
-    }
-
-    console.log(analyseText(preAnalPrep(input)).fanalysis);
-  }, [input, cipherkey]);
-
-  const [output, setOutput] = useState("");
-  //On output update, update key;
-  useEffect(() => {
-    const curOutput = output;
-
-    // Decipher
     const decipher = text => {
       const textInArr = text.split('');
       const textOutArr = textInArr.map(char =>
@@ -124,10 +115,14 @@ const App = () => {
       const textOut = textOutArr.join('');
       return textOut;
     }
+    // ? decipher before going to workarea ?
+    setWorkarea(decipher(input));
+  }, [input, cipherkey]);
 
-    setOutput(decipher(curOutput));
-//    setTextarea(decipher(curOutput))
-  }, [output, cipherkey]);
+  //On workarea update, update output and key, analyse for words;
+  useEffect(() => {
+    setOutput(workarea);
+  }, [workarea]);
 
   return (
     <div className="App">
@@ -140,8 +135,8 @@ const App = () => {
         onChange={value => setInput(value)}
       />
       <Textarea
-        value={input}
-        onChange={value => setOutput(value)}
+        value={workarea}
+        onChange={value => setWorkarea(value)}
         title={"Workarea:"}
       />
       <Output

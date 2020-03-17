@@ -3,18 +3,10 @@ import React, { useState, useEffect } from 'react';
 const Textarea = ({value, title, onChange}) => {
 
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
-  const [textarea, setTextarea] = useState("");
   const highlightDiv = React.createRef();
 /*
   const [selection, setSelection] = useState({});
 */
-  useEffect(() => {
-    setTextarea(value);
-  }, [value]);
-
-  useEffect(() => {
-    setHighlight({chars: null, isValid: false});
-  }, [textarea]);
 
   useEffect(() => {
     if (!highlight.isValid) {
@@ -24,19 +16,13 @@ const Textarea = ({value, title, onChange}) => {
 
   const handleSelect = e => {
     const {selectionStart, selectionEnd} = e.target;
-    const selected = textarea.substring(selectionStart, selectionEnd);
+    const selected = value.substring(selectionStart, selectionEnd);
     console.log(selectionStart, selectionEnd, selected);
     setHighlight({chars: selected, isValid: (selected.length !== 0)});
   }
 
-  const handleChange = e => {
-    const { value } = e.target;
-    setTextarea(value);
-    onChange(value);
-  }
-
   const highlighted = () => {
-    let ta = textarea;
+    let ta = value;
     let arr = [];
     let i = 0;
     while (highlight.isValid && ta.includes(highlight.chars)) {
@@ -72,13 +58,13 @@ const Textarea = ({value, title, onChange}) => {
                   return <span key={word+index} style={{backgroundColor: "yellow"}}>{word}</span>
                 return word
               })
-            : textarea
+            : value
           }
         </div>
         <textarea
-          value={textarea}
+          value={value}
           style={textareaStyle}
-          onChange={e => handleChange(e)}
+          onChange={e => onChange(e.target.value)}
           onClick={e => handleSelect(e)}
           onBlur={() => setHighlight({chars: null, isValid: false})}
           onScroll={(e) => handleScroll(e)}
