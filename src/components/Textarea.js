@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Textarea = ({value, title, onChange}) => {
 
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
-  const highlightDiv = React.createRef();
+  const highlightDiv = useRef(null);
 /*
   const [selection, setSelection] = useState({});
 */

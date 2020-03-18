@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 /*import axios from 'axios';*/
 import './App.css';
 
@@ -53,6 +53,14 @@ const App = () => {
   const [workarea, setWorkarea] = useState("");
   const [output, setOutput] = useState("");
 
+  const usePrevious = value => {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
+
   //On input update, update workarea and initialise key, analyse characters;
   useEffect(() => {
 
@@ -67,6 +75,7 @@ const App = () => {
 
     // Analyse input, returns objects
     const analyseText = text => {
+      /*
       // Single char frequencey analysis
       const frequencyAnalysis = text => {
         const newObj = {};
@@ -82,20 +91,80 @@ const App = () => {
         return newObj;
       }
 
-      const fanalysis = frequencyAnalysis(text);
+      const searchDigraphs = text => {
+        let newObj = {};
+        text.split('')
+          // Only chars that appear in cipherkey is counted (filter may be redundant)
+          // .filter(char => Object.keys(cipherkey).includes(char))
+          .map((char, ind, arr) => {
+            let nextChar = arr[ind+1];
+            if (!nextChar) {
+              return char;
+            }
+            (newObj[char + nextChar])
+            ? newObj[char + nextChar] += (1 / (text.length - 1))
+            : newObj[char + nextChar] = (1 / (text.length - 1))
+            return char;
+          });
+        return newObj;
+      }
+
+      const searchTrigraphs = text => {
+        let newObj = {};
+        text.split('')
+          // Only chars that appear in cipherkey is counted (filter may be redundant)
+          // .filter(char => Object.keys(cipherkey).includes(char))
+          .map((char, ind, arr) => {
+            let nextChar = arr[ind+1];
+            let lastChar = arr[ind+2];
+            if (!nextChar || !lastChar) {
+              return char;
+            }
+            (newObj[char + nextChar + lastChar])
+            ? newObj[char + nextChar + lastChar] += (1 / (text.length - 2))
+            : newObj[char + nextChar + lastChar] = (1 / (text.length - 2))
+            return char;
+          });
+        return newObj;
+      }
+      */
+      const analyse = (text, value = 1) => {
+        let newObj = {};
+        const divisor = text.length - value + 1;
+        text.split('')
+          .map((char, ind, arr) => {
+            let chars = (ind < divisor) && arr.slice(ind, ind+value).join('');
+            (chars) && (
+              (newObj[chars])
+              ? newObj[chars] += (1 / divisor)
+              : newObj[chars] = (1 / divisor)
+            )
+            return char;
+          });
+        return newObj;
+      }
+
+      const fanalysis = analyse(text, 1);
+      const digraphs = analyse(text, 2);
+      const trigraphs = analyse(text, 3);
       /*
-      const digraphs = searchDigraphs(text);
-      const trigraphs = searchTrigraphs(text);
       const doubles = searchDoubles(text);
       const initialLetters = searchInitialLetters(text);
       const finalLetters = searchFinalLetters(text);
       const words = searchWords(text);
       */
+      const fanalysis_total = Object.values(fanalysis).reduce((acc, value) => acc + value, 0);
+      const digraph_total = Object.values(digraphs).reduce((acc, value) => acc + value, 0);
+      const trigraph_total = Object.values(trigraphs).reduce((acc, value) => acc + value, 0);
+
+      console.log(fanalysis, digraphs, trigraphs);
+      console.log(`Totals: ${fanalysis_total}, ${digraph_total}, ${trigraph_total}`);
+
       return {
         fanalysis,
-        /*
         digraphs,
         trigraphs,
+        /*
         doubles,
         initialLetters,
         finalLetters,
@@ -103,7 +172,6 @@ const App = () => {
         */
       };
     }
-    //console.log(analyseText(preAnalPrep(input)).fanalysis);
 
     const decipher = text => {
       const textInArr = text.split('');
@@ -115,6 +183,7 @@ const App = () => {
       const textOut = textOutArr.join('');
       return textOut;
     }
+    analyseText(preAnalPrep(input));
     // ? decipher before going to workarea ?
     setWorkarea(decipher(input));
   }, [input, cipherkey]);
