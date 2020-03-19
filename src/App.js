@@ -52,6 +52,7 @@ const App = () => {
   const [input, setInput] = useState("");
   const [workarea, setWorkarea] = useState("");
   const [output, setOutput] = useState("");
+  const [inputAnalysis, setInputAnalysis] = useState({});
 
   const usePrevious = value => {
     const ref = useRef();
@@ -63,7 +64,6 @@ const App = () => {
 
   //On input update, update workarea and initialise key, analyse characters;
   useEffect(() => {
-
     // Apply 'options' to text, prior to analysis ie scrub/sanitise text, returns string
     const preAnalPrep = text => {
       const textInArr = text.toLowerCase().split('')
@@ -72,62 +72,9 @@ const App = () => {
       const textOut = textInArr.join('');
       return textOut;
     }
-
     // Analyse input, returns objects
     const analyseText = text => {
-      /*
-      // Single char frequencey analysis
-      const frequencyAnalysis = text => {
-        const newObj = {};
-        text.split('')
-          // Only chars that appear in cipherkey is counted (filter may be redundant)
-          // .filter(char => Object.keys(cipherkey).includes(char))
-          .map(char => {
-            (newObj[char])
-            ? newObj[char] += (1 / text.length)
-            : newObj[char] = (1 / text.length);
-            return char;
-          });
-        return newObj;
-      }
 
-      const searchDigraphs = text => {
-        let newObj = {};
-        text.split('')
-          // Only chars that appear in cipherkey is counted (filter may be redundant)
-          // .filter(char => Object.keys(cipherkey).includes(char))
-          .map((char, ind, arr) => {
-            let nextChar = arr[ind+1];
-            if (!nextChar) {
-              return char;
-            }
-            (newObj[char + nextChar])
-            ? newObj[char + nextChar] += (1 / (text.length - 1))
-            : newObj[char + nextChar] = (1 / (text.length - 1))
-            return char;
-          });
-        return newObj;
-      }
-
-      const searchTrigraphs = text => {
-        let newObj = {};
-        text.split('')
-          // Only chars that appear in cipherkey is counted (filter may be redundant)
-          // .filter(char => Object.keys(cipherkey).includes(char))
-          .map((char, ind, arr) => {
-            let nextChar = arr[ind+1];
-            let lastChar = arr[ind+2];
-            if (!nextChar || !lastChar) {
-              return char;
-            }
-            (newObj[char + nextChar + lastChar])
-            ? newObj[char + nextChar + lastChar] += (1 / (text.length - 2))
-            : newObj[char + nextChar + lastChar] = (1 / (text.length - 2))
-            return char;
-          });
-        return newObj;
-      }
-      */
       const analyse = (text, value = 1) => {
         let newObj = {};
         const divisor = text.length - value + 1;
@@ -156,10 +103,10 @@ const App = () => {
       const fanalysis_total = Object.values(fanalysis).reduce((acc, value) => acc + value, 0);
       const digraph_total = Object.values(digraphs).reduce((acc, value) => acc + value, 0);
       const trigraph_total = Object.values(trigraphs).reduce((acc, value) => acc + value, 0);
-
+      /*
       console.log(fanalysis, digraphs, trigraphs);
       console.log(`Totals: ${fanalysis_total}, ${digraph_total}, ${trigraph_total}`);
-
+      */
       return {
         fanalysis,
         digraphs,
@@ -172,7 +119,7 @@ const App = () => {
         */
       };
     }
-
+    // Decipher input using cipherkey
     const decipher = text => {
       const textInArr = text.split('');
       const textOutArr = textInArr.map(char =>
@@ -183,7 +130,7 @@ const App = () => {
       const textOut = textOutArr.join('');
       return textOut;
     }
-    analyseText(preAnalPrep(input));
+    setInputAnalysis(analyseText(preAnalPrep(input)));
     // ? decipher before going to workarea ?
     setWorkarea(decipher(input));
   }, [input, cipherkey]);
@@ -211,7 +158,9 @@ const App = () => {
       <Output
         value={output}
       />
-      <Notifications />
+      <Notifications
+        inputAnalysis={inputAnalysis}
+      />
       <Options />
     </div>
   );
