@@ -92,25 +92,25 @@ const App = () => {
       }
 
       const fanalysis = analyse(text, 1);
-      const digraphs = analyse(text, 2);
-      const trigraphs = analyse(text, 3);
+      const bigrams = analyse(text, 2);
+      const trigrams = analyse(text, 3);
       /*
       const doubles = searchDoubles(text);
       const initialLetters = searchInitialLetters(text);
       const finalLetters = searchFinalLetters(text);
       const words = searchWords(text);
-      */
+      
       const fanalysis_total = Object.values(fanalysis).reduce((acc, value) => acc + value, 0);
-      const digraph_total = Object.values(digraphs).reduce((acc, value) => acc + value, 0);
-      const trigraph_total = Object.values(trigraphs).reduce((acc, value) => acc + value, 0);
+      const bigram_total = Object.values(bigrams).reduce((acc, value) => acc + value, 0);
+      const trigram_total = Object.values(trigrams).reduce((acc, value) => acc + value, 0);
       /*
-      console.log(fanalysis, digraphs, trigraphs);
-      console.log(`Totals: ${fanalysis_total}, ${digraph_total}, ${trigraph_total}`);
+      console.log(fanalysis, bigrams, trigrams);
+      console.log(`Totals: ${fanalysis_total}, ${bigram_total}, ${trigram_total}`);
       */
       return {
         fanalysis,
-        digraphs,
-        trigraphs,
+        bigrams,
+        trigrams,
         /*
         doubles,
         initialLetters,
