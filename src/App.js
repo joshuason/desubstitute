@@ -99,7 +99,7 @@ const App = () => {
       const initialLetters = searchInitialLetters(text);
       const finalLetters = searchFinalLetters(text);
       const words = searchWords(text);
-      
+
       const fanalysis_total = Object.values(fanalysis).reduce((acc, value) => acc + value, 0);
       const bigram_total = Object.values(bigrams).reduce((acc, value) => acc + value, 0);
       const trigram_total = Object.values(trigrams).reduce((acc, value) => acc + value, 0);
@@ -133,11 +133,12 @@ const App = () => {
     setInputAnalysis(analyseText(preAnalPrep(input)));
     // ? decipher before going to workarea ?
     setWorkarea(decipher(input));
+    setOutput(decipher(input));
   }, [input, cipherkey]);
 
   //On workarea update, update output and key, analyse for words;
   useEffect(() => {
-    setOutput(workarea);
+    //setOutput(workarea);
   }, [workarea]);
 
   return (
