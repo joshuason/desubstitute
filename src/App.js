@@ -133,12 +133,11 @@ const App = () => {
     setInputAnalysis(analyseText(preAnalPrep(input)));
     // ? decipher before going to workarea ?
     setWorkarea(decipher(input));
-    setOutput(decipher(input));
   }, [input, cipherkey]);
 
   //On workarea update, update output and key, analyse for words;
   useEffect(() => {
-    //setOutput(workarea);
+    setOutput(workarea);
   }, [workarea]);
 
   return (

@@ -4,14 +4,11 @@ const Textarea = ({value, title, onChange}) => {
 
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
   const highlightDiv = useRef(null);
-/*
-  const [selection, setSelection] = useState({});
-*/
 
   useEffect(() => {
-    if (!highlight.isValid) {
-      return;
-    }
+    // if (!highlight.isValid) {
+    //   return;
+    // }
   }, [highlight]);
 
   const handleSelect = e => {
@@ -42,6 +39,33 @@ const Textarea = ({value, title, onChange}) => {
     highlightDiv.current.scrollTop = scrollTop;
   }
 
+  const handleChange = (e) => {
+    // Allow single entry edits
+    // Not multiple eg highlight multiple and edit or pasting
+
+  }
+  //onPaste -- disabled
+  //onClick
+  //onMouseOver
+
+
+  return (
+    <div id="Testbox" style={testboxStyle}>
+      {title}
+      <div className="container" style={containerStyle}>
+        {
+          (highlight.isValid)
+          ? highlighted().map((word, index) => {
+              if (word === highlight.chars)
+                return <span key={word+index} style={{backgroundColor: "yellow"}}>{word}</span>
+              return word
+            })
+          : value
+        }
+      </div>
+    </div>
+  );
+  /*
   return (
     <div id="Textarea">
     {title}
@@ -71,9 +95,9 @@ const Textarea = ({value, title, onChange}) => {
         />
       </div>
     </div>
-  );
+  );*/
 }
-
+/*
 const textboxStyle = {
   position: "relative",
   top: "0",
@@ -107,6 +131,19 @@ const textareaStyle = {
   fontSize: "13px",
   backgroundColor: "rgba(255, 255, 255, 0)",
   cursor: "text",
+}*/
+
+const testboxStyle = {
+  display: "block",
+  margin: "50px 0 0 0"
+}
+
+const containerStyle = {
+  width: "300px",
+  height: "150px",
+  borderRadius: "0",
+  border: "1px solid black",
+  textAlign: "left",
 }
 
 export default Textarea;
