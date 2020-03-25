@@ -77,13 +77,13 @@ const Textarea = ({value, title, onChange, ck }) => {
       // Set key[casper.char] = e.key
       if (isValidKey(e.key)) {
         console.log(`Replacing ${casper.char}'s with ${e.key}'s`)
+        e.target.setSelectionRange(casper.selection[0], casper.selection[1]);
         setCipherkey({...cipherkey, [casper.char.toLowerCase()]: e.key});
-        e.target.setSelectionRange(selectionStart, selectionEnd);
         console.log(selectionStart);
         e.preventDefault();
-      } else if (highlight.chars) {
-        resetHighlight();
       }
+    } else if (highlight.chars) {
+      resetHighlight();
     }
   }
 
