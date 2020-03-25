@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Textarea = ({value, title, onChange}) => {
-
+const Textarea = ({value, title, onChange, ck }) => {
+  const [cipherkey, setCipherkey] = ck;
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
   const [casper, setCasper] = useState({char: null, selection: null});
   const highlightDiv = useRef(null);
+
+  const resetCasper = () => {
+    setCasper({char: null, selection: null});
+  }
+
+  const resetHighlight = () => {
+    setHighlight({chars: null, isValid: false});
+  }
 
   useEffect(() => {
     // if (!highlight.isValid) {
@@ -14,7 +22,7 @@ const Textarea = ({value, title, onChange}) => {
 
   // Sets highlight
   const handleSelect = e => {
-
+    resetCasper();
     const {selectionStart, selectionEnd} = e.target;
     const selected = value.substring(selectionStart, selectionEnd);
     console.log(selectionStart, selectionEnd, selected);
@@ -29,8 +37,8 @@ const Textarea = ({value, title, onChange}) => {
 
   // Resets highlight on blur
   const handleBlur = e => {
-    setHighlight({chars: null, isValid: false});
-    setCasper({char: null, selection: null});
+    resetHighlight();
+    resetCasper();
     e.target.setSelectionRange(0,0);
   }
 
@@ -43,14 +51,15 @@ const Textarea = ({value, title, onChange}) => {
   }
 
   const handleKeyDown = e => {
+    const {selectionStart, selectionEnd} = e.target;
     if (e.key === 'Backspace') {
       if (highlight.chars) {
+        resetHighlight();
         return;
       }
-      const {selectionStart, selectionEnd} = e.target;
       if (casper.char) {
         e.target.setSelectionRange(selectionStart+1, selectionEnd+1);
-        setCasper({char: null, selection: null});
+        resetCasper();
         return;
       }
       e.preventDefault();
@@ -64,9 +73,22 @@ const Textarea = ({value, title, onChange}) => {
         console.log(char, selection);
       }
       (selectionStart !== 0) && e.target.setSelectionRange(selectionStart-1, selectionEnd-1);
+    } else if (casper.char) {
+      // Set key[casper.char] = e.key
+      if (isValidKey(e.key)) {
+        console.log(`Replacing ${casper.char}'s with ${e.key}'s`)
+        setCipherkey({...cipherkey, [casper.char.toLowerCase()]: e.key});
+        e.target.setSelectionRange(selectionStart, selectionEnd);
+        console.log(selectionStart);
+        e.preventDefault();
+      } else if (highlight.chars) {
+        resetHighlight();
+      }
     }
   }
 
+  const isValidKey = key =>
+    (key.length === 1) && (key.match(/[a-z]/i));
 /* // If highlighted, paste may replace one char
   const handlePaste = e => {
     e.preventDefault();
@@ -168,6 +190,7 @@ const textareaStyle = {
   backgroundColor: "rgba(255, 255, 255, 0)",
   color: "rgba(255, 255, 255, 0)",
   cursor: "text",
+  caretColor: "black",
   letterSpacing: "0.1rem",
 }
 

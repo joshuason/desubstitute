@@ -154,6 +154,7 @@ const App = () => {
         value={workarea}
         onChange={value => setWorkarea(value)}
         title={"Workarea:"}
+        ck={[cipherkey, setCipherkey]}
       />
       <Output
         value={output}
