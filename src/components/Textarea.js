@@ -75,13 +75,14 @@ const Textarea = ({value, title, onChange, ck }) => {
       (selectionStart !== 0) && e.target.setSelectionRange(selectionStart-1, selectionEnd-1);
     } else if (casper.char) {
       // Set key[casper.char] = e.key
+
       if (isValidKey(e.key)) {
         console.log(`Replacing ${casper.char}'s with ${e.key}'s`)
-        e.target.setSelectionRange(casper.selection[0], casper.selection[1]);
         setCipherkey({...cipherkey, [casper.char.toLowerCase()]: e.key});
         console.log(selectionStart);
         e.preventDefault();
       }
+      resetCasper();
     } else if (highlight.chars) {
       resetHighlight();
     }
@@ -89,14 +90,6 @@ const Textarea = ({value, title, onChange, ck }) => {
 
   const isValidKey = key =>
     (key.length === 1) && (key.match(/[a-z]/i));
-/* // If highlighted, paste may replace one char
-  const handlePaste = e => {
-    e.preventDefault();
-    return false;
-  }
-*/
-  //onClick
-  //onMouseOver
 
 /* // Returns an array of strings split into fragments
   before and after highlighted fragment for rendering highlights */
@@ -148,6 +141,7 @@ const Textarea = ({value, title, onChange, ck }) => {
           onBlur={e => handleBlur(e)}
           onScroll={e => handleScroll(e)}
           onKeyDown={e => handleKeyDown(e)}
+          onKeyUp={e => console.log('Caret at: ', e.target.selectionStart)}
           //onPaste={e => handlePaste(e)}
         />
       </div>

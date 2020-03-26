@@ -68,10 +68,11 @@ const App = () => {
     const preAnalPrep = text => {
       const textInArr = text.toLowerCase().split('')
         // Only chars that appear in cipherkey is included
-        .filter(char => Object.keys(cipherkey).includes(char));
+        //.filter(char => Object.keys(cipherkey).includes(char));
       const textOut = textInArr.join('');
       return textOut;
     }
+
     // Analyse input, returns objects
     const analyseText = text => {
 
@@ -119,6 +120,18 @@ const App = () => {
         */
       };
     }
+
+    setInputAnalysis(analyseText(preAnalPrep(input)));
+    setWorkarea(input);
+    // ? decipher before going to workarea ?
+  }, [input]);
+
+  //On workarea update, update output and key, analyse for words;
+  useEffect(() => {
+    setOutput(workarea);
+  }, [workarea]);
+
+  useEffect(() => {
     // Decipher input using cipherkey
     const decipher = text => {
       const textInArr = text.split('');
@@ -130,15 +143,11 @@ const App = () => {
       const textOut = textOutArr.join('');
       return textOut;
     }
-    setInputAnalysis(analyseText(preAnalPrep(input)));
-    // ? decipher before going to workarea ?
-    setWorkarea(decipher(input));
-  }, [input, cipherkey]);
+    setWorkarea(w => decipher(w));
+  }, [cipherkey]);
 
-  //On workarea update, update output and key, analyse for words;
-  useEffect(() => {
-    setOutput(workarea);
-  }, [workarea]);
+
+
 
   return (
     <div className="App">
@@ -166,5 +175,6 @@ const App = () => {
     </div>
   );
 }
+
 
 export default App;
