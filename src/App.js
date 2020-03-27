@@ -18,8 +18,6 @@ const PATH_SUGGESTIONS = '/sug';
 const PARAM_STRING = 's=';
 */
 const App = () => {
-  //const examplekey = 'zebracdfghijklmnopqstuvwxy'
-
   // State variables
   const [cipherkey, setCipherkey] = useState({
     a: '',
@@ -49,31 +47,28 @@ const App = () => {
     y: '',
     z: '',
   });
+  const [invCipherkey, setInvCipherkey] = useState(null);
+
   const [input, setInput] = useState("");
   const [workarea, setWorkarea] = useState("");
   const [output, setOutput] = useState("");
+
+  const [translation, setTranslation] = useState(null);
+  const [translateKey, setTranslateKey] = useState({});
+
   const [inputAnalysis, setInputAnalysis] = useState({});
 
-  const usePrevious = value => {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-  }
+  // const usePrevious = value => {
+  //   const ref = useRef();
+  //   useEffect(() => {
+  //     ref.current = value;
+  //   });
+  //   return ref.current;
+  // }
 
   //On input update, update workarea and initialise key, analyse characters;
   useEffect(() => {
-    // Apply 'options' to text, prior to analysis ie scrub/sanitise text, returns string
-    const preAnalPrep = text => {
-      const textInArr = text.toLowerCase().split('')
-        // Only chars that appear in cipherkey is included
-        //.filter(char => Object.keys(cipherkey).includes(char));
-      const textOut = textInArr.join('');
-      return textOut;
-    }
-
-    // Analyse input, returns objects
+    // Analyse input, returns object
     const analyseText = text => {
 
       const analyse = (text, value = 1) => {
@@ -120,10 +115,19 @@ const App = () => {
         */
       };
     }
+    // Translate input to Workarea
+    let tKey = {};
+    const translate = text =>
+      text.split('').map(char => {
+        if (!Number.isInteger(tKey[char])) {
+          tKey[char] = Object.keys(tKey).length;
+        }
+        return tKey[char];
+      });
 
-    setInputAnalysis(analyseText(preAnalPrep(input)));
-    setWorkarea(input);
-    // ? decipher before going to workarea ?
+    setTranslateKey(tKey);
+    setInputAnalysis(analyseText(input));
+    setTranslation(translate(input));
   }, [input]);
 
   //On workarea update, update output and key, analyse for words;
@@ -146,7 +150,15 @@ const App = () => {
     setWorkarea(w => decipher(w));
   }, [cipherkey]);
 
+  useEffect(() => {
+    setWorkarea((translation) ? translation.join() : '');
+  }, [translation]);
 
+  useEffect(() => {
+    setInvCipherkey()
+    const tkArray = Object.entries(translateKey);
+    setInvCipherkey(Object.fromEntries(tkArray.map(item => [item[1], item[0]])));
+  }, [translateKey]);
 
 
   return (
@@ -165,9 +177,11 @@ const App = () => {
         title={"Workarea:"}
         ck={[cipherkey, setCipherkey]}
       />
+      {/*
       <Output
         value={output}
       />
+      */}
       <Notifications
         inputAnalysis={inputAnalysis}
       />

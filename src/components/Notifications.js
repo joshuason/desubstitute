@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Notifications = props => {
-
+  /*
   const cornell_letterFrequency = {
     e: 0.1202,
     t: 0.0910,
@@ -30,6 +30,7 @@ const Notifications = props => {
     j: 0.0010,
     z: 0.0007,
   }
+  */
 
   const { bigrams, fanalysis, trigrams } = props.inputAnalysis;
   const fArray = (fanalysis) && Object.entries(fanalysis).sort((a, b) => b[1] - a[1]);
@@ -42,9 +43,9 @@ const Notifications = props => {
   console.log('triArray:', triArray);
 
   // Method that interprets the results of the analysis according to english letter frequencies
-  const interpret = analysisArray => {
-
-  }
+  // const interpret = analysisArray => {
+  //
+  // }
 
   return (
     <div id="Notifications">
