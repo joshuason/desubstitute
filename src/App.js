@@ -163,7 +163,6 @@ const App = () => {
       <Textarea
         value={workarea}
         onChange={value => setWorkarea(value)}
-        title={"Workarea:"}
         tk={[translateKey, setTranslateKey]}
         ck={[cipherkey, setCipherkey]}
       />

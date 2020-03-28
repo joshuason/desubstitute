@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Textarea = ({value, title, onChange, ck }) => {
+const Textarea = ({value, onChange, tk, ck}) => {
+
+  const [translateKey, setTranslateKey] = tk;
   const [cipherkey, setCipherkey] = ck;
+
+
+  // LOCAL STATES
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
   const [casper, setCasper] = useState({char: null, selection: null});
   const highlightDiv = useRef(null);
@@ -9,16 +14,9 @@ const Textarea = ({value, title, onChange, ck }) => {
   const resetCasper = () => {
     setCasper({char: null, selection: null});
   }
-
   const resetHighlight = () => {
     setHighlight({chars: null, isValid: false});
   }
-
-  useEffect(() => {
-    // if (!highlight.isValid) {
-    //   return;
-    // }
-  }, [highlight]);
 
   // Sets highlight
   const handleSelect = e => {
@@ -88,11 +86,12 @@ const Textarea = ({value, title, onChange, ck }) => {
     }
   }
 
+
+  // METHODS
+  // Returns true if valid letter
   const isValidKey = key =>
     (key.length === 1) && (key.match(/[a-z]/i));
-
-/* // Returns an array of strings split into fragments
-  before and after highlighted fragment for rendering highlights */
+  // Returns an array of strings split into fragments
   const highlighted = () => {
     let ta = value; // text array
     let arr = [];
@@ -107,10 +106,15 @@ const Textarea = ({value, title, onChange, ck }) => {
     (ta.length) && arr.push(ta);
     return arr;
   }
+  // Returns inverted key
+  const invertKey = key =>
+    Object.fromEntries(Object.entries(key).map(([k, v]) => ([v, k])));
+
+  const invTranslateKey = (invertKey(translateKey));
 
   return (
     <div id="Textarea">
-    {title}
+    Workarea:
       <div className="container">
         <div
           ref={highlightDiv}
@@ -118,6 +122,13 @@ const Textarea = ({value, title, onChange, ck }) => {
           style={textboxStyle}
         >
           {
+            (value)
+            ? value.map(item => (
+                cipherkey[invTranslateKey[item].toLowerCase()]
+                || invTranslateKey[item]
+              )).join('')
+            : null
+            /*
             (highlight.isValid)
             ? highlighted().map((word, index) => {
                 if (word === highlight.chars)
@@ -131,10 +142,18 @@ const Textarea = ({value, title, onChange, ck }) => {
                   : char
                 )
               : value
+            */
           }
         </div>
         <textarea
-          value={value}
+          value={ // To refactor... create a new state or local property
+            (value)
+            ? value.map(item => (
+              cipherkey[invTranslateKey[item].toLowerCase()]
+              || invTranslateKey[item]
+              )).join('')
+            : null
+          }
           style={textareaStyle}
           onChange={e => handleChange(e)}
           onClick={e => handleSelect(e)}
