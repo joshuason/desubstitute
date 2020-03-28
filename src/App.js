@@ -47,14 +47,11 @@ const App = () => {
     y: '',
     z: '',
   });
-  const [invCipherkey, setInvCipherkey] = useState(null);
+  const [translateKey, setTranslateKey] = useState({});
 
   const [input, setInput] = useState("");
   const [workarea, setWorkarea] = useState("");
   const [output, setOutput] = useState("");
-
-  const [translation, setTranslation] = useState(null);
-  const [translateKey, setTranslateKey] = useState({});
 
   const [inputAnalysis, setInputAnalysis] = useState({});
 
@@ -126,8 +123,8 @@ const App = () => {
       });
 
     setTranslateKey(tKey);
+    setWorkarea(translate(input));
     setInputAnalysis(analyseText(input));
-    setTranslation(translate(input));
   }, [input]);
 
   //On workarea update, update output and key, analyse for words;
@@ -135,6 +132,8 @@ const App = () => {
     setOutput(workarea);
   }, [workarea]);
 
+  // On cipherkey update, update workarea
+  /*
   useEffect(() => {
     // Decipher input using cipherkey
     const decipher = text => {
@@ -149,17 +148,7 @@ const App = () => {
     }
     setWorkarea(w => decipher(w));
   }, [cipherkey]);
-
-  useEffect(() => {
-    setWorkarea((translation) ? translation.join() : '');
-  }, [translation]);
-
-  useEffect(() => {
-    setInvCipherkey()
-    const tkArray = Object.entries(translateKey);
-    setInvCipherkey(Object.fromEntries(tkArray.map(item => [item[1], item[0]])));
-  }, [translateKey]);
-
+*/
 
   return (
     <div className="App">
@@ -169,12 +158,13 @@ const App = () => {
       />
       <Input
         value={input}
-        onChange={value => setInput(value)}
+        onChange={value => setInput(value.toUpperCase())}
       />
       <Textarea
         value={workarea}
         onChange={value => setWorkarea(value)}
         title={"Workarea:"}
+        tk={[translateKey, setTranslateKey]}
         ck={[cipherkey, setCipherkey]}
       />
       {/*
