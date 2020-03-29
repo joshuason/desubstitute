@@ -6,10 +6,58 @@ const Textarea = ({value, onChange, tk, ck}) => {
   const [cipherkey, setCipherkey] = ck;
 
 
-  // LOCAL STATES
+  //-- METHODS --//
+  // Returns true if valid letter
+  const isValidKey = key =>
+    (key.length === 1) && (key.match(/[a-z]/i));
+  // Returns an array of strings split into fragments
+  const highlighted = () => {
+    let ta = value; // text array
+    let arr = [];
+    let i = 0;
+    while (highlight.isValid && ta.includes(highlight.chars)) {
+      let index = ta.indexOf(highlight.chars);
+      let pre = ta.substring(0, index);
+      (pre.length) ? arr.push(pre, highlight.chars) : arr.push(highlight.chars);
+      ta = ta.substring(index + highlight.chars.length);
+      console.log('while:', i++);
+    }
+    (ta.length) && arr.push(ta);
+    return arr;
+  }
+  // Returns inverted key
+  const invertKey = key =>
+    Object.fromEntries(Object.entries(key).map(([k, v]) => ([v, k])));
+
+
+  //-- LOCAL STATES --//
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
   const [casper, setCasper] = useState({char: null, selection: null});
+  const [decipheredText, setDecipheredText] = useState("");
+
   const highlightDiv = useRef(null);
+  const usePrevious = value => {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
+
+  useEffect(() => {
+    const invTranslateKey = (invertKey(translateKey));
+    setDecipheredText((value) && (value.map(item => (
+        cipherkey[invTranslateKey[item].toLowerCase()]
+        || invTranslateKey[item])
+      )).join(''));
+  }, [value, cipherkey, translateKey]);
+
+  useEffect(() => {
+
+    // Translate text back to array
+
+
+  }, [decipheredText])
 
   const resetCasper = () => {
     setCasper({char: null, selection: null});
@@ -18,11 +66,13 @@ const Textarea = ({value, onChange, tk, ck}) => {
     setHighlight({chars: null, isValid: false});
   }
 
+
+  //-- HANDLE METHODS --//
   // Sets highlight
   const handleSelect = e => {
     resetCasper();
     const {selectionStart, selectionEnd} = e.target;
-    const selected = value.substring(selectionStart, selectionEnd);
+    const selected = decipheredText.substring(selectionStart, selectionEnd);
     console.log(selectionStart, selectionEnd, selected);
     setHighlight({chars: selected, isValid: (selected.length !== 0)});
   }
@@ -41,11 +91,10 @@ const Textarea = ({value, onChange, tk, ck}) => {
   }
 
   const handleChange = e => {
-    const { value } = e.target;
-    onChange(value);
-    // Allow single entry edits
-    // Not multiple eg highlight multiple and edit or pasting
-
+    const val = e.target.value;
+    console.log('val',val);
+    const array = val.split('').map(char => translateKey[char]);
+    onChange(array);
   }
 
   const handleKeyDown = e => {
@@ -87,31 +136,6 @@ const Textarea = ({value, onChange, tk, ck}) => {
   }
 
 
-  // METHODS
-  // Returns true if valid letter
-  const isValidKey = key =>
-    (key.length === 1) && (key.match(/[a-z]/i));
-  // Returns an array of strings split into fragments
-  const highlighted = () => {
-    let ta = value; // text array
-    let arr = [];
-    let i = 0;
-    while (highlight.isValid && ta.includes(highlight.chars)) {
-      let index = ta.indexOf(highlight.chars);
-      let pre = ta.substring(0, index);
-      (pre.length) ? arr.push(pre, highlight.chars) : arr.push(highlight.chars);
-      ta = ta.substring(index + highlight.chars.length);
-      console.log('while:', i++);
-    }
-    (ta.length) && arr.push(ta);
-    return arr;
-  }
-  // Returns inverted key
-  const invertKey = key =>
-    Object.fromEntries(Object.entries(key).map(([k, v]) => ([v, k])));
-
-  const invTranslateKey = (invertKey(translateKey));
-
   return (
     <div id="Textarea">
     Workarea:
@@ -121,39 +145,10 @@ const Textarea = ({value, onChange, tk, ck}) => {
           className="textarea"
           style={textboxStyle}
         >
-          {
-            (value)
-            ? value.map(item => (
-                cipherkey[invTranslateKey[item].toLowerCase()]
-                || invTranslateKey[item]
-              )).join('')
-            : null
-            /*
-            (highlight.isValid)
-            ? highlighted().map((word, index) => {
-                if (word === highlight.chars)
-                  return <span key={word+index} style={highlightStyle}>{word}</span>
-                return word
-              })
-            : (casper.char)
-              ? value.split('').map((char, index) =>
-                  (char === casper.char)
-                  ? <span key={char+index} style={casperStyle}>{char}</span>
-                  : char
-                )
-              : value
-            */
-          }
+          {decipheredText}
         </div>
         <textarea
-          value={ // To refactor... create a new state or local property
-            (value)
-            ? value.map(item => (
-              cipherkey[invTranslateKey[item].toLowerCase()]
-              || invTranslateKey[item]
-              )).join('')
-            : null
-          }
+          value={decipheredText}
           style={textareaStyle}
           onChange={e => handleChange(e)}
           onClick={e => handleSelect(e)}

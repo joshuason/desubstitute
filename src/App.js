@@ -132,24 +132,6 @@ const App = () => {
     setOutput(workarea);
   }, [workarea]);
 
-  // On cipherkey update, update workarea
-  /*
-  useEffect(() => {
-    // Decipher input using cipherkey
-    const decipher = text => {
-      const textInArr = text.split('');
-      const textOutArr = textInArr.map(char =>
-        (cipherkey[char.toLowerCase()])
-        ? cipherkey[char.toLowerCase()]
-        : char
-      );
-      const textOut = textOutArr.join('');
-      return textOut;
-    }
-    setWorkarea(w => decipher(w));
-  }, [cipherkey]);
-*/
-
   return (
     <div className="App">
       <Cipherkey
