@@ -1,63 +1,45 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Textarea = ({value, onChange, tk, ck}) => {
+const Textarea = ({value, onChange, ck}) => {
 
-  const [translateKey, setTranslateKey] = tk;
   const [cipherkey, setCipherkey] = ck;
 
-
-  //-- METHODS --//
-  // Returns true if valid letter
-  const isValidKey = key =>
-    (key.length === 1) && (key.match(/[a-z]/i));
-  // Returns an array of strings split into fragments
-  const highlighted = () => {
-    let ta = value; // text array
-    let arr = [];
-    let i = 0;
-    while (highlight.isValid && ta.includes(highlight.chars)) {
-      let index = ta.indexOf(highlight.chars);
-      let pre = ta.substring(0, index);
-      (pre.length) ? arr.push(pre, highlight.chars) : arr.push(highlight.chars);
-      ta = ta.substring(index + highlight.chars.length);
-      console.log('while:', i++);
-    }
-    (ta.length) && arr.push(ta);
-    return arr;
-  }
-  // Returns inverted key
-  const invertKey = key =>
-    Object.fromEntries(Object.entries(key).map(([k, v]) => ([v, k])));
-
-
   //-- LOCAL STATES --//
+  const [translateKey, setTranslateKey] = useState({});
+  const [translation, setTranslation] = useState([]);
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
   const [casper, setCasper] = useState({char: null, selection: null});
   const [decipheredText, setDecipheredText] = useState("");
 
   const highlightDiv = useRef(null);
-  const usePrevious = value => {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-  }
+
+  useEffect(() => {
+    // Translate workarea to translation
+    let tKey = {};
+    const translate = text =>
+      text.split('').map(char => {
+        if (!Number.isInteger(tKey[char])) {
+          tKey[char] = Object.keys(tKey).length;
+        }
+        return tKey[char];
+      });
+    setTranslation(translate(value));
+    setTranslateKey(tKey);
+    console.log('work')
+  }, [value]);
 
   useEffect(() => {
     const invTranslateKey = (invertKey(translateKey));
-    setDecipheredText((value) && (value.map(item => (
-        cipherkey[invTranslateKey[item].toLowerCase()]
-        || invTranslateKey[item])
-      )).join(''));
-  }, [value, cipherkey, translateKey]);
+    const array = translation.map(it => (
+      cipherkey[invTranslateKey[it].toLowerCase()]
+      || invTranslateKey[it]
+    ));
+    setDecipheredText(array.join(''))
+  }, [translation, cipherkey, translateKey]);
 
   useEffect(() => {
-
-    // Translate text back to array
-
-
-  }, [decipheredText])
+    
+  }, [decipheredText]);
 
   const resetCasper = () => {
     setCasper({char: null, selection: null});
@@ -92,9 +74,7 @@ const Textarea = ({value, onChange, tk, ck}) => {
 
   const handleChange = e => {
     const val = e.target.value;
-    console.log('val',val);
-    const array = val.split('').map(char => translateKey[char]);
-    onChange(array);
+    setDecipheredText(val);
   }
 
   const handleKeyDown = e => {
@@ -136,6 +116,22 @@ const Textarea = ({value, onChange, tk, ck}) => {
   }
 
 
+  // Returns an array of strings split into fragments
+  function highlighted(value) {
+    let ta = value; // text array
+    let arr = [];
+    let i = 0;
+    while (highlight.isValid && ta.includes(highlight.chars)) {
+      let index = ta.indexOf(highlight.chars);
+      let pre = ta.substring(0, index);
+      (pre.length) ? arr.push(pre, highlight.chars) : arr.push(highlight.chars);
+      ta = ta.substring(index + highlight.chars.length);
+      console.log('while:', i++);
+    }
+    (ta.length) && arr.push(ta);
+    return arr;
+  }
+
   return (
     <div id="Textarea">
     Workarea:
@@ -163,6 +159,25 @@ const Textarea = ({value, onChange, tk, ck}) => {
   );
 }
 
+//-- METHODS --//
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+// Returns true if valid letter
+function isValidKey(key) {
+  (key.length === 1) && (key.match(/[a-z]/i));
+}
+// Returns inverted key
+function invertKey(key) {
+  return Object.fromEntries(Object.entries(key).map(([k, v]) => ([v, k])));
+}
+
+
+//-- STYLES --//
 const textboxStyle = {
   position: "relative",
   top: "0",

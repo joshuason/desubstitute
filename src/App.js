@@ -112,18 +112,8 @@ const App = () => {
         */
       };
     }
-    // Translate input to Workarea
-    let tKey = {};
-    const translate = text =>
-      text.split('').map(char => {
-        if (!Number.isInteger(tKey[char])) {
-          tKey[char] = Object.keys(tKey).length;
-        }
-        return tKey[char];
-      });
 
-    setTranslateKey(tKey);
-    setWorkarea(translate(input));
+    setWorkarea(input);
     setInputAnalysis(analyseText(input));
   }, [input]);
 
@@ -145,7 +135,6 @@ const App = () => {
       <Textarea
         value={workarea}
         onChange={value => setWorkarea(value)}
-        tk={[translateKey, setTranslateKey]}
         ck={[cipherkey, setCipherkey]}
       />
       {/*
