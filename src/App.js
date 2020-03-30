@@ -46,12 +46,20 @@ const App = () => {
     y: '',
     z: '',
   });
-  //const [translateKey, setTranslateKey] = useState({});
-
   const [input, setInput] = useState("");
   const [workarea, setWorkarea] = useState("");
   const translation = useTranslation(input);
   const analysis = useAnalysis(input);
+
+  useEffect(() => {
+    const invKey = invertKey(translation.translatekey);
+    const array = translation.translation.map(value => (
+      cipherkey[invKey[value].toLowerCase()]
+      || invKey[value]
+    ));
+    const text = array.join('');
+    setWorkarea(text);
+  }, [translation, cipherkey]);
 
 /*
   useEffect(() => {
@@ -74,7 +82,7 @@ const App = () => {
         onChange={value => setInput(value.toUpperCase())}
       />
       <Textarea
-        value={translation.translation}
+        value={workarea}
         onChange={value => setWorkarea(value)}
         ck={[cipherkey, setCipherkey]}
       />
@@ -85,10 +93,10 @@ const App = () => {
     </div>
   );
 }
-
+// Returns { translation, translatekey }
 function useTranslation(input) {
   const [translatekey, setTranslatekey] = useState({});
-  const [translation, setTranslation] = useState("");
+  const [translation, setTranslation] = useState([]);
 
   useEffect(() => {
     let tKey = {};
@@ -106,7 +114,8 @@ function useTranslation(input) {
 
   return {
     translation,
-    translatekey
+    setTranslation,
+    translatekey,
   };
 }
 
@@ -162,6 +171,7 @@ function useAnalysis(text) {
 
 // Returns inverted key
 function invertKey(key) {
+  // probs needs to filter entries with no values
   return Object.fromEntries(Object.entries(key).map(([k, v]) => ([v, k])));
 }
 
