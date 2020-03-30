@@ -1,6 +1,7 @@
 import React from 'react';
 
 const Notifications = props => {
+  console.log(props);
   /*
   const cornell_letterFrequency = {
     e: 0.1202,
@@ -32,8 +33,9 @@ const Notifications = props => {
   }
   */
 
-  const { bigrams, fanalysis, trigrams } = props.inputAnalysis;
-  const fArray = (fanalysis) && Object.entries(fanalysis).sort((a, b) => b[1] - a[1]);
+  /*
+  const { bigrams, unigrams, trigrams } = props.charAnalysis;
+  const fArray = (unigrams) && Object.entries(unigrams).sort((a, b) => b[1] - a[1]);
   const biArray = (bigrams) && Object.entries(bigrams).sort((a, b) => b[1] - a[1]);
   const triArray = (trigrams) && Object.entries(trigrams).sort((a, b) => b[1] - a[1]);
 
@@ -46,7 +48,7 @@ const Notifications = props => {
   // const interpret = analysisArray => {
   //
   // }
-
+  */
   return (
     <div id="Notifications">
 

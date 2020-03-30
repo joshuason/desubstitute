@@ -5,41 +5,10 @@ const Textarea = ({value, onChange, ck}) => {
   const [cipherkey, setCipherkey] = ck;
 
   //-- LOCAL STATES --//
-  const [translateKey, setTranslateKey] = useState({});
-  const [translation, setTranslation] = useState([]);
   const [highlight, setHighlight] = useState({chars: null, isValid: false});
   const [casper, setCasper] = useState({char: null, selection: null});
-  const [decipheredText, setDecipheredText] = useState("");
 
   const highlightDiv = useRef(null);
-
-  useEffect(() => {
-    // Translate workarea to translation
-    let tKey = {};
-    const translate = text =>
-      text.split('').map(char => {
-        if (!Number.isInteger(tKey[char])) {
-          tKey[char] = Object.keys(tKey).length;
-        }
-        return tKey[char];
-      });
-    setTranslation(translate(value));
-    setTranslateKey(tKey);
-    console.log('work')
-  }, [value]);
-
-  useEffect(() => {
-    const invTranslateKey = (invertKey(translateKey));
-    const array = translation.map(it => (
-      cipherkey[invTranslateKey[it].toLowerCase()]
-      || invTranslateKey[it]
-    ));
-    setDecipheredText(array.join(''))
-  }, [translation, cipherkey, translateKey]);
-
-  useEffect(() => {
-    
-  }, [decipheredText]);
 
   const resetCasper = () => {
     setCasper({char: null, selection: null});
@@ -54,7 +23,7 @@ const Textarea = ({value, onChange, ck}) => {
   const handleSelect = e => {
     resetCasper();
     const {selectionStart, selectionEnd} = e.target;
-    const selected = decipheredText.substring(selectionStart, selectionEnd);
+    const selected = value.substring(selectionStart, selectionEnd);
     console.log(selectionStart, selectionEnd, selected);
     setHighlight({chars: selected, isValid: (selected.length !== 0)});
   }
@@ -74,7 +43,7 @@ const Textarea = ({value, onChange, ck}) => {
 
   const handleChange = e => {
     const val = e.target.value;
-    setDecipheredText(val);
+    onChange(val);
   }
 
   const handleKeyDown = e => {
@@ -141,10 +110,10 @@ const Textarea = ({value, onChange, ck}) => {
           className="textarea"
           style={textboxStyle}
         >
-          {decipheredText}
+          {value}
         </div>
         <textarea
-          value={decipheredText}
+          value={value}
           style={textareaStyle}
           onChange={e => handleChange(e)}
           onClick={e => handleSelect(e)}
@@ -171,10 +140,7 @@ function usePrevious(value) {
 function isValidKey(key) {
   (key.length === 1) && (key.match(/[a-z]/i));
 }
-// Returns inverted key
-function invertKey(key) {
-  return Object.fromEntries(Object.entries(key).map(([k, v]) => ([v, k])));
-}
+
 
 
 //-- STYLES --//
