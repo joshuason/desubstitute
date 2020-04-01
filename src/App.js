@@ -48,29 +48,41 @@ const App = () => {
   });
   const [input, setInput] = useState("");
   const [workarea, setWorkarea] = useState("");
-  const translation = useTranslation(input);
+
+  const [translation, setTranslation] = useState([]);
+  const [translationkey, setTranslationkey] = useState({});
+
+  // const translation = useTranslation(input).translationArr;
+  // const decipheredText = getDecipheredText(cipherkey);
   const analysis = useAnalysis(input);
 
   useEffect(() => {
-    const invKey = invertKey(translation.translatekey);
-    const array = translation.translation.map(value => (
-      cipherkey[invKey[value].toLowerCase()]
-      || invKey[value]
-    ));
-    const text = array.join('');
-    setWorkarea(text);
-  }, [translation, cipherkey]);
+    let key = {};
+    const translate = text =>
+      text.split('').map(char => {
+        if (!Number.isInteger(key[char])) {
+          key[char] = Object.keys(key).length;
+        }
+        return key[char];
+      });
 
-/*
+    setTranslation(translate(input));
+    setTranslationkey(key);
+  }, [input])
+
   useEffect(() => {
-    const invTranslateKey = (invertKey(translatekey));
-    // const array = (translation) && translation.map(it => (
-    //   cipherkey[invTranslateKey[it].toLowerCase()]
-    //   || invTranslateKey[it]
-    // ));
-    setWorkarea();
-  }, [translation])
-*/
+    const invKey = invertKey(translationkey);
+    const decipher = array => {
+      const newArray = array.map(value => (
+        cipherkey[invKey[value].toLowerCase()]
+        || invKey[value]
+      ));
+      const text = newArray.join('');
+      return text;
+    }
+    setWorkarea(decipher(translation));
+  }, [translation, cipherkey, translationkey])
+
   return (
     <div className="App">
       <Cipherkey
@@ -84,7 +96,7 @@ const App = () => {
       <Textarea
         value={workarea}
         onChange={value => setWorkarea(value)}
-        ck={[cipherkey, setCipherkey]}
+        //ck={[cipherkey, setCipherkey]}
       />
       <Notifications
         charAnalysis={analysis}
@@ -96,7 +108,7 @@ const App = () => {
 // Returns { translation, translatekey }
 function useTranslation(input) {
   const [translatekey, setTranslatekey] = useState({});
-  const [translation, setTranslation] = useState([]);
+  const [translationArr, setTranslationArr] = useState([]);
 
   useEffect(() => {
     let tKey = {};
@@ -108,13 +120,13 @@ function useTranslation(input) {
         return tKey[char];
       });
 
-    setTranslation(translate(input));
+    setTranslationArr(translate(input));
     setTranslatekey(tKey);
   }, [input]);
 
   return {
-    translation,
-    setTranslation,
+    translationArr,
+    setTranslationArr,
     translatekey,
   };
 }
@@ -167,6 +179,17 @@ function useAnalysis(text) {
     };
   }
   return analyseText(text);
+}
+
+function getDecipheredText(translation, cipherkey) {
+  const { translatekey, translationArr } = translation;
+  const invKey = invertKey(translation.translatekey);
+  const array = translation.translationArr.map(value => (
+    cipherkey[invKey[value].toLowerCase()]
+    || invKey[value]
+  ));
+  const text = array.join('');
+  return text;
 }
 
 // Returns inverted key
