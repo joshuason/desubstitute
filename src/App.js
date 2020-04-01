@@ -1,8 +1,14 @@
+/*  NOTES:
+|
+|   [ ] Need to fix 
+|   [ ]
+|__________________________________*/
+
 import React, { useState, useEffect } from 'react';
 /*import axios from 'axios';*/
 import './App.css';
 
-import Cipherkey from './components/Cipherkey';
+import CipherKey from './components/CipherKey';
 import Input from './components/Input';
 import Notifications from './components/Notifications';
 import Options from './components/Options';
@@ -18,7 +24,7 @@ const PARAM_STRING = 's=';
 */
 const App = () => {
   // State variables
-  const [cipherkey, setCipherkey] = useState({
+  const [cipherKey, setCipherKey] = useState({
     a: '',
     b: '',
     c: '',
@@ -48,25 +54,24 @@ const App = () => {
   });
   const [input, setInput] = useState("");
   const [workarea, setWorkarea] = useState("");
-
   const analysis = useAnalysis(input);
 
   useEffect(() => {
-    const cipheredText = getCipheredText(cipherkey, input);
+    const cipheredText = getCipheredText(cipherKey, input);
     setWorkarea(cipheredText);
-  }, [input, cipherkey]);
+  }, [input, cipherKey]);
 
   const handleWorkareaChanged = (newValue) => {
     setWorkarea(newValue);
-    const decipheredText = getDecipheredText(cipherkey, newValue);
+    const decipheredText = getDecipheredText(cipherKey, newValue);
     setInput(decipheredText);
   }
 
   return (
     <div className="App">
-      <Cipherkey
-        cipherkey={cipherkey}
-        onCipherKeyChanged={setCipherkey}
+      <CipherKey
+        cipherKey={cipherKey}
+        onCipherKeyChanged={setCipherKey}
       />
       <Input
         value={input}
@@ -134,16 +139,16 @@ function useAnalysis(text) {
   return analyseText(text);
 }
 
-function getCipheredText(cipherkey, decipheredText) {
-  return decipheredText.split('').map(char => getCipheredChar(cipherkey, char)).join('');
+function getCipheredText(cipherKey, decipheredText) {
+  return decipheredText.split('').map(char => getCipheredChar(cipherKey, char)).join('');
 }
 
-function getCipheredChar(cipherkey, char) {
-  return cipherkey[char.toLowerCase()] || char;
+function getCipheredChar(cipherKey, char) {
+  return cipherKey[char.toLowerCase()] || char;
 }
 
-function getDecipheredText(cipherkey, cipheredText) {
-  const invertedCipherKey = invertKey(cipherkey);
+function getDecipheredText(cipherKey, cipheredText) {
+  const invertedCipherKey = invertKey(cipherKey);
   return cipheredText.split('').map(char => getDecipheredChar(invertedCipherKey, char)).join('').toUpperCase();
 }
 
@@ -158,11 +163,3 @@ function invertKey(key) {
 }
 
 export default App;
-
-// const usePrevious = value => {
-//   const ref = useRef();
-//   useEffect(() => {
-//     ref.current = value;
-//   });
-//   return ref.current;
-// }
