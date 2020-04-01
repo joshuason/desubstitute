@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
-const Textarea = ({value, onChange}) => {
+const Textarea = ({value, onValueChanged}) => {
 
   const highlightDiv = useRef(null);
 
@@ -18,7 +18,7 @@ const Textarea = ({value, onChange}) => {
         <textarea
           value={value}
           style={textareaStyle}
-          onChange={e => onChange(e.target.value)}
+          onChange={e => onValueChanged(e.target.value.toUpperCase())}
           // onClick={e => handleSelect(e)}
           // onBlur={e => handleBlur(e)}
           // onScroll={e => handleScroll(e)}
@@ -31,6 +31,7 @@ const Textarea = ({value, onChange}) => {
   );
 }
 
+/*
 //-- METHODS --//
 function usePrevious(value) {
   const ref = useRef();
@@ -43,7 +44,7 @@ function usePrevious(value) {
 function isValidKey(key) {
   (key.length === 1) && (key.match(/[a-z]/i));
 }
-
+*/
 
 
 //-- STYLES --//
@@ -85,7 +86,7 @@ const textareaStyle = {
   caretColor: "black",
   letterSpacing: "0.1rem",
 }
-
+/*
 const highlightStyle = {
   backgroundColor: "yellow"
 }
@@ -97,7 +98,6 @@ const casperStyle = {
   margin: 0,
   padding: 0,
 }
-
-
+*/
 
 export default Textarea;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const KeyComponent = props => {
-  const { keyOfValue, value, onChange } = props;
+  const { keyOfValue, value, onValueChanged } = props;
 
   return (
     <span style={keyStyle}>
@@ -9,7 +9,7 @@ const KeyComponent = props => {
       <input
         type="text"
         value={value}
-        onChange={onChange}
+        onChange={(e) => onValueChanged(keyOfValue, e.target.value)}
         maxLength="1"
         style={inputStyle}
       />

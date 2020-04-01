@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 /*import axios from 'axios';*/
 import './App.css';
 
@@ -49,54 +49,32 @@ const App = () => {
   const [input, setInput] = useState("");
   const [workarea, setWorkarea] = useState("");
 
-  const [translation, setTranslation] = useState([]);
-  const [translationkey, setTranslationkey] = useState({});
-
-  // const translation = useTranslation(input).translationArr;
-  // const decipheredText = getDecipheredText(cipherkey);
   const analysis = useAnalysis(input);
 
   useEffect(() => {
-    let key = {};
-    const translate = text =>
-      text.split('').map(char => {
-        if (!Number.isInteger(key[char])) {
-          key[char] = Object.keys(key).length;
-        }
-        return key[char];
-      });
+    const cipheredText = getCipheredText(cipherkey, input);
+    setWorkarea(cipheredText);
+  }, [input, cipherkey]);
 
-    setTranslation(translate(input));
-    setTranslationkey(key);
-  }, [input])
-
-  useEffect(() => {
-    const invKey = invertKey(translationkey);
-    const decipher = array => {
-      const newArray = array.map(value => (
-        cipherkey[invKey[value].toLowerCase()]
-        || invKey[value]
-      ));
-      const text = newArray.join('');
-      return text;
-    }
-    setWorkarea(decipher(translation));
-  }, [translation, cipherkey, translationkey])
+  const handleWorkareaChanged = (newValue) => {
+    setWorkarea(newValue);
+    const decipheredText = getDecipheredText(cipherkey, newValue);
+    setInput(decipheredText);
+  }
 
   return (
     <div className="App">
       <Cipherkey
         cipherkey={cipherkey}
-        setCipherkey={setCipherkey}
+        onCipherKeyChanged={setCipherkey}
       />
       <Input
         value={input}
-        onChange={value => setInput(value.toUpperCase())}
+        onValueChanged={setInput}
       />
       <Textarea
         value={workarea}
-        onChange={value => setWorkarea(value)}
-        //ck={[cipherkey, setCipherkey]}
+        onValueChanged={handleWorkareaChanged}
       />
       <Notifications
         charAnalysis={analysis}
@@ -104,31 +82,6 @@ const App = () => {
       <Options />
     </div>
   );
-}
-// Returns { translation, translatekey }
-function useTranslation(input) {
-  const [translatekey, setTranslatekey] = useState({});
-  const [translationArr, setTranslationArr] = useState([]);
-
-  useEffect(() => {
-    let tKey = {};
-    const translate = text =>
-      text.split('').map(char => {
-        if (!Number.isInteger(tKey[char])) {
-          tKey[char] = Object.keys(tKey).length;
-        }
-        return tKey[char];
-      });
-
-    setTranslationArr(translate(input));
-    setTranslatekey(tKey);
-  }, [input]);
-
-  return {
-    translationArr,
-    setTranslationArr,
-    translatekey,
-  };
 }
 
 function useAnalysis(text) {
@@ -181,21 +134,27 @@ function useAnalysis(text) {
   return analyseText(text);
 }
 
-function getDecipheredText(translation, cipherkey) {
-  const { translatekey, translationArr } = translation;
-  const invKey = invertKey(translation.translatekey);
-  const array = translation.translationArr.map(value => (
-    cipherkey[invKey[value].toLowerCase()]
-    || invKey[value]
-  ));
-  const text = array.join('');
-  return text;
+function getCipheredText(cipherkey, decipheredText) {
+  return decipheredText.split('').map(char => getCipheredChar(cipherkey, char)).join('');
+}
+
+function getCipheredChar(cipherkey, char) {
+  return cipherkey[char.toLowerCase()] || char;
+}
+
+function getDecipheredText(cipherkey, cipheredText) {
+  const invertedCipherKey = invertKey(cipherkey);
+  return cipheredText.split('').map(char => getDecipheredChar(invertedCipherKey, char)).join('').toUpperCase();
+}
+
+function getDecipheredChar(invertedCipherKey, char) {
+  return invertedCipherKey[char.toLowerCase()] || char;
 }
 
 // Returns inverted key
 function invertKey(key) {
   // probs needs to filter entries with no values
-  return Object.fromEntries(Object.entries(key).map(([k, v]) => ([v, k])));
+  return Object.fromEntries(Object.entries(key).map(([k, v]) => ([v.toLowerCase(), k])));
 }
 
 export default App;
