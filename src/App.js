@@ -1,6 +1,6 @@
 /*  NOTES:
 |
-|   [ ] Need to fix
+|   [ ] Bug: editting is fine only with caplocks enabled
 |   [ ]
 |__________________________________*/
 
@@ -63,10 +63,9 @@ const App = () => {
 
   const handleWorkareaChanged = (newValue) => {
     setWorkarea(newValue);
-    const decipheredText = getDecipheredText(cipherKey, newValue);
-    setInput(decipheredText);
+    //const decipheredText = getDecipheredText(cipherKey, newValue);
+    //setInput(decipheredText);
   }
-
 
   return (
     <div className="App">
@@ -150,7 +149,7 @@ function getCipheredChar(cipherKey, char) {
 
 function getDecipheredText(cipherKey, cipheredText) {
   const invertedCipherKey = invertKey(cipherKey);
-  return cipheredText.split('').map(char => getDecipheredChar(invertedCipherKey, char)).join('').toUpperCase();
+  return cipheredText.split('').map(char => getDecipheredChar(invertedCipherKey, char)).join('');
 }
 
 function getDecipheredChar(invertedCipherKey, char) {

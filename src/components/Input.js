@@ -9,7 +9,7 @@ const Input = props => {
         <textarea
           type="text"
           value={props.value}
-          onChange={(e) => props.onValueChanged(e.target.value.toUpperCase())}
+          onChange={(e) => props.onValueChanged(e.target.value)}
         />
       </label>
     </div>

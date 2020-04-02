@@ -30,8 +30,6 @@ const Textarea = ({value, onValueChanged}) => {
     resetSelection();
   }
 
-
-
   return (
     <div id="Textarea">
     Workarea:
@@ -48,7 +46,7 @@ const Textarea = ({value, onValueChanged}) => {
         <textarea
           value={value}
           style={textareaStyle}
-          onChange={e => onValueChanged(e.target.value.toUpperCase())}
+          onChange={e => onValueChanged(e.target.value)}
           onScroll={handleScroll}
           onSelect={handleSelect}
           onBlur={handleBlur}
