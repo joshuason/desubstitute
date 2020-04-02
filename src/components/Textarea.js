@@ -1,8 +1,36 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 const Textarea = ({value, onValueChanged}) => {
 
+  const [selection, setSelection] = useState("");
   const highlightDiv = useRef(null);
+
+  const resetSelection = () => {
+    setSelection("");
+  }
+
+  // Syncs the highlight div to the textarea
+  const handleScroll = e => {
+    var scrollTop = e.target.scrollTop;
+    highlightDiv.current.scrollTop = scrollTop;
+  }
+
+  const handleSelect = e => {
+    const {selectionStart, selectionEnd} = e.target;
+    const selected = value.substring(selectionStart, selectionEnd);
+    console.log(selectionStart, selectionEnd, selected);
+    setSelection(selected);
+  }
+
+  const handleBlur = e => {
+    resetSelection();
+  }
+
+  const handleMouseDown = e => {
+    resetSelection();
+  }
+
+
 
   return (
     <div id="Textarea">
@@ -10,41 +38,26 @@ const Textarea = ({value, onValueChanged}) => {
       <div className="container">
         <div
           ref={highlightDiv}
-          className="textarea"
+          className="highlights"
           style={textboxStyle}
         >
-          {value}
+          {
+            value
+          }
         </div>
         <textarea
           value={value}
           style={textareaStyle}
           onChange={e => onValueChanged(e.target.value.toUpperCase())}
-          // onClick={e => handleSelect(e)}
-          // onBlur={e => handleBlur(e)}
-          // onScroll={e => handleScroll(e)}
-          // onKeyDown={e => handleKeyDown(e)}
-          // onKeyUp={e => console.log('Caret at: ', e.target.selectionStart)}
-          // onPaste={e => handlePaste(e)}
+          onScroll={handleScroll}
+          onSelect={handleSelect}
+          onBlur={handleBlur}
+          onMouseDown={handleMouseDown}
         />
       </div>
     </div>
   );
 }
-
-/*
-//-- METHODS --//
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
-// Returns true if valid letter
-function isValidKey(key) {
-  (key.length === 1) && (key.match(/[a-z]/i));
-}
-*/
 
 
 //-- STYLES --//
@@ -86,11 +99,11 @@ const textareaStyle = {
   caretColor: "black",
   letterSpacing: "0.1rem",
 }
-/*
+
 const highlightStyle = {
   backgroundColor: "yellow"
 }
-
+/*
 const casperStyle = {
   color: "grey",
   backgroundColor: "lightgrey",

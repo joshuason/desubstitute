@@ -1,6 +1,6 @@
 /*  NOTES:
 |
-|   [ ] Need to fix 
+|   [ ] Need to fix
 |   [ ]
 |__________________________________*/
 
@@ -66,6 +66,7 @@ const App = () => {
     const decipheredText = getDecipheredText(cipherKey, newValue);
     setInput(decipheredText);
   }
+
 
   return (
     <div className="App">
