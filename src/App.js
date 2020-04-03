@@ -1,6 +1,6 @@
 /*  NOTES:
 |
-|   [ ] Bug: editting is fine only with caplocks enabled
+|   [ ] Bug: editing is fine only with caplocks enabled
 |   [ ]
 |__________________________________*/
 
@@ -63,8 +63,8 @@ const App = () => {
 
   const handleWorkareaChanged = (newValue) => {
     setWorkarea(newValue);
-    //const decipheredText = getDecipheredText(cipherKey, newValue);
-    //setInput(decipheredText);
+    const decipheredText = getDecipheredText(cipherKey, newValue);
+    setInput(decipheredText);
   }
 
   return (

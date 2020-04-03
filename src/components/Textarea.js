@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 const Textarea = ({value, onValueChanged}) => {
 
   const [selection, setSelection] = useState("");
   const highlightDiv = useRef(null);
+  const highlightLocations = selection && getHighlights(value, selection);
 
   const resetSelection = () => {
     setSelection("");
@@ -57,6 +58,31 @@ const Textarea = ({value, onValueChanged}) => {
   );
 }
 
+function getHighlights(text, selected) {
+  const { length: tLength } = text;
+  const { length: hLength } = selected;
+  const locations = text.split('').reduce((acc, cur, begin, arr) => {
+    const end = begin + hLength;
+    if ((end <= tLength) && (arr.slice(begin, end).join('') === selected)) {
+      acc.push([begin, end]);
+    }
+    return acc;
+  }, []);
+  console.log("locations",locations);
+  return locations;
+}
+
+/*
+function getOverlappedHighlights(highlightLocations) {
+  const obj = highlightLocations.reduce((acc, cur, idx, src) => {
+    const length = cur[1] - cur[0]; // or pass length as argument
+    const value = src.filter(arr => {})
+    acc = {...acc, [cur]: value}
+    return acc;
+  }, []);
+  return obj;
+}
+*/
 
 //-- STYLES --//
 const textboxStyle = {

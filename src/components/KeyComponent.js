@@ -9,7 +9,7 @@ const KeyComponent = props => {
       <input
         type="text"
         value={value}
-        onChange={(e) => onValueChanged(keyOfValue, e.target.value)}
+        onChange={(e) => onValueChanged(keyOfValue, e.target.value.toLowerCase())}
         maxLength="1"
         style={inputStyle}
       />
