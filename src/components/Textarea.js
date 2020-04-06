@@ -1,10 +1,15 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 
 const Textarea = ({value, onValueChanged}) => {
 
-  const [selection, setSelection] = useState("");
+  const [selection, setSelection] = useState(null);
   const highlightDiv = useRef(null);
-  const highlightLocations = selection && getHighlights(value, selection);
+  const highlightLocations = getHighlights(value, selection);
+  const highlightsInChunks = reduceOverlaps(highlightLocations);
+  const valueInChunks = getValueInChunks(value, highlightsInChunks);
+
+  //const valueToRender = highlightLocations && getValueToBeRendered(value, highlightLocations);
+
 
   const resetSelection = () => {
     setSelection("");
@@ -43,6 +48,7 @@ const Textarea = ({value, onValueChanged}) => {
           {
             value
           }
+          {'🕺'}
         </div>
         <textarea
           value={value}
@@ -58,7 +64,9 @@ const Textarea = ({value, onValueChanged}) => {
   );
 }
 
+// Returns all highlights
 function getHighlights(text, selected) {
+  if (!selected) return null;
   const { length: tLength } = text;
   const { length: hLength } = selected;
   const locations = text.split('').reduce((acc, cur, begin, arr) => {
@@ -68,21 +76,57 @@ function getHighlights(text, selected) {
     }
     return acc;
   }, []);
-  console.log("locations",locations);
+  console.log(`${selected} occurs ${locations.length} times...`, locations);
   return locations;
 }
 
-/*
-function getOverlappedHighlights(highlightLocations) {
-  const obj = highlightLocations.reduce((acc, cur, idx, src) => {
-    const length = cur[1] - cur[0]; // or pass length as argument
-    const value = src.filter(arr => {})
-    acc = {...acc, [cur]: value}
+// Returns array of overlapped selections
+function reduceOverlaps(highlightLocations) {
+  if (!highlightLocations) return null;
+  const array = highlightLocations.reduce((acc, cur, ind, arr) => {
+    const recentEntry = acc[acc.length-1];
+
+    const start = cur[0];
+    const end = cur[1];
+
+    if (recentEntry && (recentEntry[1] > cur[0])) {
+      recentEntry[1] = cur[1];
+    } else {
+      acc.push([start, end]);
+    }
     return acc;
   }, []);
-  return obj;
+  console.log(`... in ${array.length} "chunk(s)"`, array);
+  return array;
 }
-*/
+
+// Returns array of highlight locations in fragments (overlaps and single occurences)
+
+function getValueInChunks(text, chunks) {
+  if (!chunks) return null;
+  const textBlocks = chunks.reduce((acc, cur, ind, arr) => {
+    let recentEntry = acc[acc.length-1];
+    // Push item before first cur item, if any
+    if (!recentEntry && (cur[0] > 0)) {
+      acc.push([0, cur[0]]);
+      recentEntry = acc[acc.length-1];
+    }
+    if (recentEntry && recentEntry[1] < cur[0]) {
+      acc.push([(recentEntry[1] || 0), cur[0]]);
+    }
+    recentEntry = acc[acc.length-1];
+    // Push cur
+    if ((cur[0] === 0) || (cur[0] === recentEntry[1])) {
+      acc.push(cur);
+    }
+    return acc;
+  }, []);
+  // Push item after final chunk
+  if (textBlocks[textBlocks.length-1][1] !== text.length) {
+    textBlocks.push([textBlocks[textBlocks.length-1][1], text.length])
+  }
+  return textBlocks;
+}
 
 //-- STYLES --//
 const textboxStyle = {

@@ -30,3 +30,13 @@ textarea {
   margin: 0;
   border-radius: 0;
 }
+
+.group-1 {
+  background: yellow;
+  color: grey;
+}
+
+.highlights::selection {
+  color: black;
+  border: 1px solid black;
+}
