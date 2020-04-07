@@ -4,10 +4,11 @@ const Textarea = ({value, onValueChanged}) => {
 
   const [selection, setSelection] = useState(null);
   const highlightDiv = useRef(null);
+
   const highlightLocations = getHighlights(value, selection);
   const highlightsInChunks = reduceOverlaps(highlightLocations);
   const valueInChunks = getValueInChunks(value, highlightsInChunks);
-
+  (valueInChunks) && console.log(valueInChunks);
   //const valueToRender = highlightLocations && getValueToBeRendered(value, highlightLocations);
 
 
@@ -38,7 +39,7 @@ const Textarea = ({value, onValueChanged}) => {
 
   return (
     <div id="Textarea">
-    Workarea:
+    Output:
       <div className="container">
         <div
           ref={highlightDiv}
@@ -46,9 +47,19 @@ const Textarea = ({value, onValueChanged}) => {
           style={textboxStyle}
         >
           {
-            value
+            (valueInChunks)
+            ? valueInChunks.map(chunk => {
+                if (highlightsInChunks.includes(chunk)) {
+                  return (
+                    <span style={highlightStyle}>
+                      {value.substring(chunk[0], chunk[1])}
+                    </span>
+                  );
+                }
+                return value.substring(chunk[0], chunk[1])
+              })
+            : value
           }
-          {'🕺'}
         </div>
         <textarea
           value={value}
@@ -64,7 +75,7 @@ const Textarea = ({value, onValueChanged}) => {
   );
 }
 
-// Returns all highlights
+// Returns all highlights inlcuding overlaps
 function getHighlights(text, selected) {
   if (!selected) return null;
   const { length: tLength } = text;
@@ -76,11 +87,11 @@ function getHighlights(text, selected) {
     }
     return acc;
   }, []);
-  console.log(`${selected} occurs ${locations.length} times...`, locations);
+  console.log(`${selected} occurs ${locations.length} time(s)...`, locations);
   return locations;
 }
 
-// Returns array of overlapped selections
+// Returns array of overlapping hightlights and single occurences
 function reduceOverlaps(highlightLocations) {
   if (!highlightLocations) return null;
   const array = highlightLocations.reduce((acc, cur, ind, arr) => {
@@ -100,8 +111,7 @@ function reduceOverlaps(highlightLocations) {
   return array;
 }
 
-// Returns array of highlight locations in fragments (overlaps and single occurences)
-
+// Returns array of all fragments (highlights and not)
 function getValueInChunks(text, chunks) {
   if (!chunks) return null;
   const textBlocks = chunks.reduce((acc, cur, ind, arr) => {

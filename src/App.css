@@ -31,12 +31,12 @@ textarea {
   border-radius: 0;
 }
 
-.group-1 {
-  background: yellow;
-  color: grey;
-}
-
 .highlights::selection {
   color: black;
   border: 1px solid black;
+}
+
+#Notifications {
+  font-size: 0.5rem;
+  margin: 50px 0 0 0;
 }

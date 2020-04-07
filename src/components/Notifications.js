@@ -1,8 +1,6 @@
 import React from 'react';
 
-const Notifications = props => {
-  console.log(props);
-  /*
+const Notifications = ({charAnalysis}) => {
   const cornell_letterFrequency = {
     e: 0.1202,
     t: 0.0910,
@@ -31,42 +29,81 @@ const Notifications = props => {
     j: 0.0010,
     z: 0.0007,
   }
-  */
 
-  /*
-  const { bigrams, unigrams, trigrams } = props.charAnalysis;
-  const fArray = (unigrams) && Object.entries(unigrams).sort((a, b) => b[1] - a[1]);
-  const biArray = (bigrams) && Object.entries(bigrams).sort((a, b) => b[1] - a[1]);
-  const triArray = (trigrams) && Object.entries(trigrams).sort((a, b) => b[1] - a[1]);
+  console.log(charAnalysis);
+  const { unigrams, bigrams, trigrams } = charAnalysis;
 
-  //fArray && fArray.length !== 0 && console.log('fArray sorted:', fArray.sort((a, b) => b[1] - a[1]));
-  console.log('fArray:', fArray);
-  console.log('biArray:', biArray);
-  console.log('triArray:', triArray);
+  const unigramPercentages = objToArray(unigrams).sort((a, b) => b[1] - a[1]).map(item => {
+      return [item[0], numToPercentage(item[1])]
+    });
 
-  // Method that interprets the results of the analysis according to english letter frequencies
-  // const interpret = analysisArray => {
-  //
-  // }
-  */
+  const inputAnalysis = analyseInput(cornell_letterFrequency, unigrams);
+  const outputAnalysis = {};
+
+  console.log(unigramPercentages);
+
   return (
     <div id="Notifications">
-
+      {/*
+        (unigramPercentages)
+        && unigramPercentages.map(item => {
+          return <p>{item[0]}: {item[1]}</p>
+        })
+        */
+      }
     </div>
   );
 }
 
-export default Notifications;
-
-/*
-const quicksort = (array, low, high) => {
-  if (pivot.length === 1 && prepivot.length === 0 && postpivot.length ===0) {
-    return pivot;
-  }
-
+function objToArray(obj) {
+  return Object.entries(obj);
 }
 
-const testarray = [['a',3], ['b',8], ['c',1], ['d',6], ['e',5], ['f',4], ['g',7], ['h',2], ['i',9], ['j',0]];
-let sortedArray = array.sort((a, b) => b[1] - a[1]);
-console.log('Using Array.sort():', sortedArray);
-*/
+function objToSortedArray(obj) {
+  return Object.entries(obj).sort((a, b) => b[1] - a[1]);
+}
+
+function numToPercentage(num) {
+  return `${(num * 100).toFixed(2)}%`
+}
+
+function getDeviation(control, variable) {
+  return (control - variable) ** 2;
+}
+
+function analyseInput(control, data) {
+  const control_sortedArray = objToSortedArray(control);
+  const data_sortedArray = objToSortedArray(data);
+
+  if (!control_sortedArray || !data_sortedArray) {
+    return null;
+  }
+
+  const dataLength = data_sortedArray.length;
+  const lowerBound = 5; // Also cast_size ::end
+  const upperBound = dataLength - lowerBound; // ::begin
+  const mid = Math.floor(lowerBound / 2);
+  const deviation = data_sortedArray.reduce((acc, cur, ind, arr) => {
+    const begin = (ind - mid > 0)
+      ? (ind - mid < upperBound)
+        ? ind - mid
+        : upperBound
+      : 0;
+    const end = (ind + mid + 1 < dataLength)
+      ? (ind + mid + 1 > lowerBound)
+        ? ind + mid + 1
+        : lowerBound
+      : dataLength;
+
+    const subControl =  control_sortedArray.slice(begin, end);
+    const deviationArray = subControl.map(item =>
+      [item[0], getDeviation(cur[1], item[1])]
+    ).sort((a, b) => a[1] - b[1]);
+    acc[cur[0]] = deviationArray;
+    return acc;
+  }, {});
+
+  return deviation;
+}
+
+export default Notifications;
