@@ -51,7 +51,7 @@ const Textarea = ({value, onValueChanged}) => {
             ? valueInChunks.map(chunk => {
                 if (highlightsInChunks.includes(chunk)) {
                   return (
-                    <span style={highlightStyle}>
+                    <span key={chunk} style={highlightStyle}>
                       {value.substring(chunk[0], chunk[1])}
                     </span>
                   );
@@ -65,7 +65,7 @@ const Textarea = ({value, onValueChanged}) => {
           value={value}
           style={textareaStyle}
           onChange={e => onValueChanged(e.target.value)}
-          onScroll={handleScroll}
+          onScroll={handleScroll} // Syncs the scroll of textarea with highlightDiv
           onSelect={handleSelect}
           onBlur={handleBlur}
           onMouseDown={handleMouseDown}

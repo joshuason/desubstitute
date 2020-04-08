@@ -108,7 +108,7 @@ function useAnalysis(text) {
       return newObj;
     }
 
-    const unigrams = analyse(text, 1);
+    const monograms = analyse(text, 1);
     const bigrams = analyse(text, 2);
     const trigrams = analyse(text, 3);
     /*
@@ -117,15 +117,15 @@ function useAnalysis(text) {
     const finalLetters = searchFinalLetters(text);
     const words = searchWords(text);
 
-    const unigrams_total = Object.values(unigrams).reduce((acc, value) => acc + value, 0);
+    const monograms_total = Object.values(monograms).reduce((acc, value) => acc + value, 0);
     const bigram_total = Object.values(bigrams).reduce((acc, value) => acc + value, 0);
     const trigram_total = Object.values(trigrams).reduce((acc, value) => acc + value, 0);
     /*
-    console.log(unigrams, bigrams, trigrams);
-    console.log(`Totals: ${unigrams_total}, ${bigram_total}, ${trigram_total}`);
+    console.log(monograms, bigrams, trigrams);
+    console.log(`Totals: ${monograms_total}, ${bigram_total}, ${trigram_total}`);
     */
     return {
-      unigrams,
+      monograms,
       bigrams,
       trigrams,
       /*
