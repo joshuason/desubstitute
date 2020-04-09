@@ -15,12 +15,13 @@ const Notifications = ({charAnalysis}) => {
   const { monograms, bigrams, trigrams } = charAnalysis;
 
   // Could refactor below as a custom hook [useAnalyseInput(charAnalysis)]
-  const monogramAnalysis = analyseInput(pc_monogram, monograms);
-  const bigramAnalysis = analyseInput(pc_bigram, bigrams);
-  const trigramAnalysis = analyseInput(pc_trigram, trigrams);
+  const analyseAndFormat = (control, ngram) => invertPercentagesOfAnalysis(analyseInput(control, ngram));
+  const monogramAnalysis = analyseAndFormat(pc_monogram, monograms); //analyseInput(pc_monogram, monograms);
+  const bigramAnalysis = analyseAndFormat(pc_bigram, bigrams); //analyseInput(pc_bigram, bigrams);
+  const trigramAnalysis = analyseAndFormat(pc_trigram, trigrams); //analyseInput(pc_trigram, trigrams);
 
   const inputAnalyses = { monogramAnalysis, bigramAnalysis, trigramAnalysis };
-  // const inputInterpretation = interpretInput(inputAnalyses);
+  const inputInterpretation = interpretInput(inputAnalyses, charAnalysis);
   // const outputAnalysis = {};
 
   // sorted human readable percentages (ie Strings);
@@ -29,13 +30,13 @@ const Notifications = ({charAnalysis}) => {
   const trigramPercentages = getPercentagesOfObj(trigrams);
 
   const inputPercentages = { monogramPercentages, bigramPercentages, trigramPercentages};
-
+  /*
   console.log('Raw', charAnalysis);
   console.log('Raw (-h)', inputPercentages);
   console.log('Churned', inputAnalyses);
-  console.log('Inverted', invertAnalysisObj(getInversePercentagesOfAnalysis(monogramAnalysis)));
-  console.log('Inverted', getInversePercentagesOfAnalysis(trigramAnalysis));
-
+  console.log('Inverted', monogramAnalysis);
+  console.log('Inverted', invertAnalysisObj(trigramAnalysis));
+  */
   return (
     <div id="Notifications">
       {
@@ -90,7 +91,7 @@ function invertAnalysisObj(obj) {
   return inverse;
 }
 
-function getInversePercentagesOfAnalysis(obj) {
+function invertPercentagesOfAnalysis(obj) {
   const keys = getKeysFromObj(obj);
   const newObj = keys.reduce((acc, key, ind, arr) => {
     acc = {
@@ -148,8 +149,30 @@ function analyseInput(control, sample, radius = 2) {
 }
 
 function interpretInput(analyses, occurences) {
-  const { monogramAnalysis } = analyses;
-  const { monograms } = occurences;
+  const { monogramAnalysis, bigramAnalysis, trigramAnalysis } = analyses;
+  const { monograms, bigrams, trigrams } = occurences;
+
+  const pc_monoSortedArr = objToSortedArray(pc_monogram);
+  const pc_biSortedArr = objToSortedArray(pc_bigram);
+  const pc_triSortedArr = objToSortedArray(pc_trigram);
+
+  const monoSortedArr = objToSortedArray(monograms);
+  const biSortedArr = objToSortedArray(bigrams);
+  const triSortedArr = objToSortedArray(trigrams);
+
+  // nth most common item
+  const nthItem = (sortedArray, n) => (sortedArray.length) ? sortedArray[n][0] : null;
+  const n = 3;
+  console.log(
+    nthItem(pc_monoSortedArr, n),
+    nthItem(pc_biSortedArr, n),
+    nthItem(pc_triSortedArr, n)
+  );
+  console.log(
+    nthItem(monoSortedArr, n),
+    nthItem(biSortedArr, n),
+    nthItem(triSortedArr, n)
+  );
 
   const interpretation = {};
 
