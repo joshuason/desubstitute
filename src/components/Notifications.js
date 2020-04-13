@@ -13,6 +13,8 @@ const {
 
 const Notifications = ({charAnalysis}) => {
   const { monograms, bigrams, trigrams } = charAnalysis;
+  const ic = getIC(objToArray(pc_monogram), objToArray(monograms));
+  console.log(ic);
 
   // Could refactor below as a custom hook [useAnalyseInput(charAnalysis)]
   const analyseAndFormat = (control, ngram) => invertPercentagesOfAnalysis(analyseInput(control, ngram));
@@ -30,10 +32,10 @@ const Notifications = ({charAnalysis}) => {
   const trigramPercentages = getPercentagesOfObj(trigrams);
 
   const inputPercentages = { monogramPercentages, bigramPercentages, trigramPercentages};
-  /*
+
   console.log('Raw', charAnalysis);
   console.log('Raw (-h)', inputPercentages);
-  console.log('Churned', inputAnalyses);
+  console.log('Churned', inputAnalyses);/*
   console.log('Inverted', monogramAnalysis);
   console.log('Inverted', invertAnalysisObj(trigramAnalysis));
   */
@@ -44,6 +46,18 @@ const Notifications = ({charAnalysis}) => {
       }
     </div>
   );
+}
+//--  Additional data  --//
+// index of coincidence
+function getIC(control, sample) {
+  const { length } = control;
+  const uniformProb = parseFloat(1 / length);
+  const mrControl = control.reduce((acc, cur) => (acc + (cur[1] ** 2)), 0) - uniformProb;
+  const mrSample = sample.reduce((acc, cur) => (acc + (cur[1] ** 2)), 0) - uniformProb;
+  const ic = (mrControl - mrSample) >= 0
+    ? mrControl - mrSample
+    : mrSample - mrControl;
+  return ic;
 }
 
 function objToArray(obj) {
@@ -162,19 +176,24 @@ function interpretInput(analyses, occurences) {
 
   // nth most common item
   const nthItem = (sortedArray, n) => (sortedArray.length) ? sortedArray[n][0] : null;
-  const n = 3;
-  console.log(
-    nthItem(pc_monoSortedArr, n),
-    nthItem(pc_biSortedArr, n),
-    nthItem(pc_triSortedArr, n)
-  );
-  console.log(
-    nthItem(monoSortedArr, n),
-    nthItem(biSortedArr, n),
-    nthItem(triSortedArr, n)
-  );
+  const n = 0;
+  // console.log(
+  //   nthItem(pc_monoSortedArr, n),
+  //   nthItem(pc_biSortedArr, n),
+  //   nthItem(pc_triSortedArr, n)
+  // );
+  // console.log(
+  //   nthItem(monoSortedArr, n),
+  //   nthItem(biSortedArr, n),
+  //   nthItem(triSortedArr, n)
+  // );
 
-  const interpretation = {};
+  const assumptions = [];
+  const interpretation = {
+    assumptions,
+  };
+
+
 
   return interpretation;
 }
