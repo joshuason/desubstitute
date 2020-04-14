@@ -13,8 +13,8 @@ const {
 
 const Notifications = ({charAnalysis}) => {
   const { monograms, bigrams, trigrams } = charAnalysis;
-  const ic = getIC(objToArray(pc_monogram), objToArray(monograms));
-  console.log(ic);
+  // const ic = getIC(objToArray(pc_monogram), objToArray(monograms));
+  // console.log(ic);
 
   // Could refactor below as a custom hook [useAnalyseInput(charAnalysis)]
   const analyseAndFormat = (control, ngram) => invertPercentagesOfAnalysis(analyseInput(control, ngram));
@@ -25,14 +25,14 @@ const Notifications = ({charAnalysis}) => {
   const inputAnalyses = { monogramAnalysis, bigramAnalysis, trigramAnalysis };
   const inputInterpretation = interpretInput(inputAnalyses, charAnalysis);
   // const outputAnalysis = {};
-
+  /*
   // sorted human readable percentages (ie Strings);
   const monogramPercentages = getPercentagesOfObj(monograms);
   const bigramPercentages = getPercentagesOfObj(bigrams);
   const trigramPercentages = getPercentagesOfObj(trigrams);
 
   const inputPercentages = { monogramPercentages, bigramPercentages, trigramPercentages};
-
+  /*
   console.log('Raw', charAnalysis);
   console.log('Raw (-h)', inputPercentages);
   console.log('Churned', inputAnalyses);/*
@@ -58,6 +58,10 @@ function getIC(control, sample) {
     ? mrControl - mrSample
     : mrSample - mrControl;
   return ic;
+}
+
+function getChiSquared(control, sample) {
+
 }
 
 function objToArray(obj) {
@@ -177,16 +181,22 @@ function interpretInput(analyses, occurences) {
   // nth most common item
   const nthItem = (sortedArray, n) => (sortedArray.length) ? sortedArray[n][0] : null;
   const n = 0;
-  // console.log(
-  //   nthItem(pc_monoSortedArr, n),
-  //   nthItem(pc_biSortedArr, n),
-  //   nthItem(pc_triSortedArr, n)
-  // );
-  // console.log(
-  //   nthItem(monoSortedArr, n),
-  //   nthItem(biSortedArr, n),
-  //   nthItem(triSortedArr, n)
-  // );
+  console.log(monoSortedArr)
+
+  const hypothesisOrder = monoSortedArr.map((char, ind) => {
+    return {
+      [char[0]]: pc_monoSortedArr[ind][0],
+    };
+  });
+
+  const hypothesisProbability = monoSortedArr.map(char => {
+    return {
+      [char[0]]: monogramAnalysis[char[0]][0][0],
+      match: monogramAnalysis[char[0]][0][1],
+    };
+  });
+
+  console.log(hypothesisOrder, hypothesisProbability)
 
   const assumptions = [];
   const interpretation = {
