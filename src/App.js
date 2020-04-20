@@ -71,6 +71,8 @@ const App = () => {
     setInput(decipheredText);
   }
 
+  const { length } = input;
+
   return (
     <div className="App">
       <CipherKey
@@ -87,6 +89,7 @@ const App = () => {
       />
       <Notifications
         charAnalysis={analysis}
+        length={length}
       />
       <Options />
     </div>

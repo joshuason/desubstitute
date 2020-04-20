@@ -19,15 +19,14 @@ const sortedData = objToArray(data)
     return acc;
 }, {});
 
-const Notifications = ({charAnalysis}) => {
+const Notifications = ({charAnalysis, length}) => {
   const { monograms, bigrams, trigrams } = charAnalysis;
-
   const sortedMonograms = objToSortedArray(monograms);
   const sortedBigrams = objToSortedArray(bigrams);
   const sortedTrigrams = objToSortedArray(trigrams);
 
   // console.log('sorted trigrams', sortedTrigrams)
-  const assumptions = useAssumptions({sortedMonograms, sortedBigrams, sortedTrigrams}, charAnalysis);
+  const assumptions = useAssumptions({sortedMonograms, sortedBigrams, sortedTrigrams}, charAnalysis, length);
 
   return (
     <div id="Notifications">
@@ -51,31 +50,56 @@ function getKeysFromObj(obj) {
   return Object.keys(obj);
 }
 
+function calcChiSquared(sampleCount, averageCount) {
+  return ((sampleCount - averageCount) ** 2) / averageCount;
+}
 
 //
-function useAssumptions(sortedSample, charAnalysis) {
+function useAssumptions(sortedSample, charAnalysis, length) {
   const { sortedMonograms, sortedBigrams, sortedTrigrams } = sortedSample;
   const { monograms, bigrams, trigrams } = charAnalysis;
-  
-  const analyseAssumption = assumption => {
-    if (!assumption) return null;
-    const [ sample, control ] = assumption;
-    // Analyse trigram
-    const probSample = trigrams[sample];
-    const probControl = pc_trigram[control];
-    console.log(probSample, probControl);
-    // Analyse bigrams
 
-    // Analyse monograms
-  };
+  const assumptionBigrams = trigram => [trigram.slice(0,2), trigram.slice(1,3)];
+  const assumptionMonograms = trigram => [trigram.slice(0,1), trigram.slice(1,2), trigram.slice(2,3)];
+
+  const assessAssumption = assumptionTrigrams => {
+    if (!assumptionTrigrams) return;
+
+    const sampleAssumptions = [
+      assumptionTrigrams[0],
+      ...assumptionBigrams(assumptionTrigrams[0]),
+      ...assumptionMonograms(assumptionTrigrams[0]),
+    ]
+    const controlAssumptions = [
+      assumptionTrigrams[1],
+      ...assumptionBigrams(assumptionTrigrams[1]),
+      ...assumptionMonograms(assumptionTrigrams[1]),
+    ]
+
+    const chiSquared = sampleAssumptions.reduce((acc, item, ind) => {
+      const l = length - item.length + 1;
+      const sampleCount = item.length === 3 && Math.round(l * trigrams[item])
+        || item.length === 2 && Math.round(l * bigrams[item])
+        || item.length === 1 && Math.round(l * monograms[item]);
+      const oItem = controlAssumptions[ind]
+      const averageCount = item.length === 3 && l * pc_trigram[oItem]
+        || item.length === 2 && l * pc_bigram[oItem]
+        || item.length === 1 && l * pc_monogram[oItem];
+      return acc + calcChiSquared(sampleCount, averageCount);
+    }, 0);
+    console.log(chiSquared);
+    console.log(calcChiSquared(length*trigrams[assumptionTrigrams[0]],
+      length*pc_trigram[assumptionTrigrams[1]]))
+  }
 
   // Loop through trigrams in control data
   const newArray = sortedData.pc_trigram.map((itm, ind) => {
     const target = sortedTrigrams[ind];
 
     const assumption = target && [ target[0], itm[0] ]
-    const assumptionAnalysis = analyseAssumption(assumption);
     console.log(assumption);
+    if (assumption && assumption[0] === 'XLI')
+      assessAssumption(assumption);
   });
 
 }
