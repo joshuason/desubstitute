@@ -13,6 +13,7 @@ import Input from './components/Input';
 import Notifications from './components/Notifications';
 import Options from './components/Options';
 import Textarea from './components/Textarea';
+import Autosolver from './components/Autosolver';
 /*
 const PATH_BASE = 'https://api.datamuse.com';
 const PATH_WORDS = '/words';
@@ -91,7 +92,10 @@ const App = () => {
         charAnalysis={analysis}
         length={length}
       />
-      <Options />
+      <Autosolver
+        input={input}
+        cipherKey={cipherKey}
+      />
     </div>
   );
 }

@@ -78,18 +78,16 @@ function useAssumptions(sortedSample, charAnalysis, length) {
 
     const chiSquared = sampleAssumptions.reduce((acc, item, ind) => {
       const l = length - item.length + 1;
-      const sampleCount = item.length === 3 && Math.round(l * trigrams[item])
-        || item.length === 2 && Math.round(l * bigrams[item])
-        || item.length === 1 && Math.round(l * monograms[item]);
-      const oItem = controlAssumptions[ind]
-      const averageCount = item.length === 3 && l * pc_trigram[oItem]
-        || item.length === 2 && l * pc_bigram[oItem]
-        || item.length === 1 && l * pc_monogram[oItem];
+      const sampleCount = (item.length === 3 && Math.round(l * trigrams[item]))
+        || (item.length === 2 && Math.round(l * bigrams[item]))
+        || (item.length === 1 && Math.round(l * monograms[item]));
+      const cItem = controlAssumptions[ind]
+      const averageCount = (item.length === 3 && l * pc_trigram[cItem])
+        || (item.length === 2 && l * pc_bigram[cItem])
+        || (item.length === 1 && l * pc_monogram[cItem]);
       return acc + calcChiSquared(sampleCount, averageCount);
     }, 0);
-    console.log(chiSquared);
-    console.log(calcChiSquared(length*trigrams[assumptionTrigrams[0]],
-      length*pc_trigram[assumptionTrigrams[1]]))
+    return chiSquared;
   }
 
   // Loop through trigrams in control data
@@ -97,11 +95,14 @@ function useAssumptions(sortedSample, charAnalysis, length) {
     const target = sortedTrigrams[ind];
 
     const assumption = target && [ target[0], itm[0] ]
-    console.log(assumption);
-    if (assumption && assumption[0] === 'XLI')
-      assessAssumption(assumption);
+    return [ assumption, assessAssumption(assumption) ];
+    // console.log(assumption);
+    // if (assumption && assumption[0] === 'XLI')
+    //   assessAssumption(assumption);
   });
-
+  console.log(sortedTrigrams)
+  const sortedNewArray = newArray.sort((a, b) => a[1] - b[1]);
+  console.log(sortedNewArray);
 }
 
 
