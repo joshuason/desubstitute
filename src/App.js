@@ -10,8 +10,8 @@ import './App.css';
 
 import CipherKey from './components/CipherKey';
 import Input from './components/Input';
-import Notifications from './components/Notifications';
-import Options from './components/Options';
+// import Notifications from './components/Notifications';
+// import Options from './components/Options';
 import Textarea from './components/Textarea';
 import Autosolver from './components/Autosolver';
 /*
@@ -55,7 +55,7 @@ const App = () => {
   });
   const [input, setInput] = useState("");
   const [workarea, setWorkarea] = useState("");
-  const analysis = useAnalysis(input);
+  //const analysis = useAnalysis(input);
 
   useEffect(() => {
     setInput("LIVITCSWPIYVEWHEVSRIQMXLEYVEOIEWHRXEXIPFEMVEWHKVSTYLXZIXLIKIIXPIJVSZEYPERRGERIMWQLMGLMXQERIWGPSRIHMXQEREKIETXMJTPRGEVEKEITREWHEXXLEXXMZITWAWSQWXSWEXTVEPMRXRSJGSTVRIEYVIEXCVMUIMWERGMIWXMJMGCSMWXSJOMIQXLIVIQIVIXQSVSTWHKPEGARCSXRWIEVSWIIBXVIZMXFSJXLIKEGAEWHEPSWYSWIWIEVXLISXLIVXLIRGEPIRQIVIIBGIIHMWYPFLEVHEWHYPSRRFQMXLEPPXLIECCIEVEWGISJKTVWMRLIHYSPHXLIQIMYLXSJXLIMWRIGXQEROIVFVIZEVAEKPIEWHXEAMWYEPPXLMWYRMWXSGSWRMHIVEXMSWMGSTPHLEVHPFKPEZINTCMXIVJSVLMRSCMWMSWVIRCIGXMWYMX");
@@ -72,7 +72,7 @@ const App = () => {
     setInput(decipheredText);
   }
 
-  const { length } = input;
+  // const { length } = input;
 
   return (
     <div className="App">
@@ -88,10 +88,14 @@ const App = () => {
         value={workarea}
         onValueChanged={handleWorkareaChanged}
       />
-      <Notifications
-        charAnalysis={analysis}
-        length={length}
-      />
+      {
+        /*
+        <Notifications
+          charAnalysis={analysis}
+          length={length}
+        />
+        */
+      }
       <Autosolver
         input={input}
         cipherKey={cipherKey}
@@ -99,7 +103,7 @@ const App = () => {
     </div>
   );
 }
-
+/*
 function useAnalysis(text) {
   const analyseText = text => {
 
@@ -134,7 +138,7 @@ function useAnalysis(text) {
     /*
     console.log(monograms, bigrams, trigrams);
     console.log(`Totals: ${monograms_total}, ${bigram_total}, ${trigram_total}`);
-    */
+
     return {
       monograms,
       bigrams,
@@ -144,11 +148,12 @@ function useAnalysis(text) {
       initialLetters,
       finalLetters,
       words
-      */
+
     };
   }
   return analyseText(text);
 }
+*/
 
 function getCipheredText(cipherKey, decipheredText) {
   return decipheredText.split('').map(char => getCipheredChar(cipherKey, char)).join('');

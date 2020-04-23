@@ -20,6 +20,7 @@
 /images
 /src/components/Notifications-copy.js
 /src/components/Textarea2.js
+/src/data/english_quadgrams.txt
 
 npm-debug.log*
 yarn-debug.log*
