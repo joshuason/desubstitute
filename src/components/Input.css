@@ -1,0 +1,17 @@
+.Input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Input textarea{
+  letter-spacing: 0.1rem;
+  width: 99%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid #AAAAAA;
+  border-bottom: 1px solid #CCCCCC;
+  resize: none;
+  overflow: scroll;
+}

@@ -10,7 +10,7 @@ const PATH_SUGGESTIONS = '/sug';
 const PARAM_STRING = 's=';
 */
 
-const Suggestions = () => {
+const Suggestions = ({ output }) => {
   return (
     <div className="Suggestions">
 

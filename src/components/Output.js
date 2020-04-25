@@ -1,23 +1,16 @@
 import React from 'react';
+import './Output.css';
 
-const Output = ({value}) => {
+const Output = ({ value }) => {
 
   return (
-    <div id="Output">
-      <label>
-        Output:
-        <div style={outputStyle}>
-          {value}
-        </div>
-      </label>
+    <div className="Output">
+      Output:
+      <div className="Output-container">
+        {value}
+      </div>
     </div>
   );
-}
-
-const outputStyle = {
-  textAlign: "left",
-  paddingTop: "1rem",
-  wordWrap: "break-word",
 }
 
 export default Output;

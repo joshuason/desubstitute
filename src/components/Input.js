@@ -1,17 +1,16 @@
 import React from 'react';
+import './Input.css';
 
-const Input = props => {
+const Input = ({ value, onValueChanged }) => {
 
   return (
-    <div id="Input">
-      <label>
-        Input:
-        <textarea
-          type="text"
-          value={props.value}
-          onChange={(e) => props.onValueChanged(e.target.value)}
-        />
-      </label>
+    <div className="Input">
+      Input:
+      <textarea
+        type="text"
+        value={value}
+        onChange={(e) => onValueChanged(e.target.value)}
+      />
     </div>
   );
 }

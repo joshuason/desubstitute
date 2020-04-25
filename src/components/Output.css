@@ -1,0 +1,11 @@
+.Output {
+  display: flex;
+  flex-direction: column;
+}
+
+.Output-container {
+  text-align: left;
+  padding-top: 1rem;
+  word-wrap: break-word;
+  overflow: scroll;
+}

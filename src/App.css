@@ -4,6 +4,8 @@ html, body {
 }
 
 .App {
+  margin: 0 auto;
+  width: 700px;
   text-align: center;
   height: 100vh;
   display: flex;
@@ -12,31 +14,45 @@ html, body {
   align-content: space-between;
 }
 
+/* LAYOUT */
+.GridPanel {
+  margin: 20px 0;
+  max-width: 100%;
+  display: grid;
+  grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+}
 
-#Input, #Output, #Textarea {
+.Input {
+  grid-area: 1 / 1 / span 1 / span 1;
+}
+
+.Output {
+  grid-area: 2 / 1 / span 1 / span 1;
+}
+
+.Analysis {
+  grid-area: 1 / 2 / span 1 / span 1;
+}
+
+.Suggestions, .Info {
+  grid-area: 2 / 2 / span 1 / span 1;
+}
+
+/* UNIFORMITY */
+.Input, .Output, .Analysis, .Suggestions, .Info {
   box-sizing: border-box;
-  width: 300px;
-  height: 150px;
-  margin: 50px 0 0 0;
+  max-width: 300px;
+  max-height: 300px;
 }
 
-#Input textarea{
-  letter-spacing: 0.1rem;
-}
 
-textarea {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  border-radius: 0;
-}
-
+/*
 .highlights::selection {
   color: black;
   border: 1px solid black;
 }
 
-#Notifications {
+.Notifications {
   font-size: 0.5rem;
   margin: 50px 0 0 0;
 }
@@ -44,3 +60,4 @@ textarea {
 .Autosolver {
   margin: 50px 0 0 0;
 }
+*/

@@ -1,10 +1,9 @@
 import React from 'react';
 
-const KeyComponent = props => {
-  const { keyOfValue, value, onValueChanged } = props;
+const KeyComponent = ({ keyOfValue, value, onValueChanged }) => {
 
   return (
-    <span style={keyStyle}>
+    <span className="KeyComponent" style={keyStyle}>
       <p style={{margin: "0", textTransform: "uppercase"}}>{keyOfValue}</p>
       <input
         type="text"

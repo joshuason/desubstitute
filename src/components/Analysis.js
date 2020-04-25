@@ -1,9 +1,11 @@
 import React from 'react';
 
-const Analysis = () => {
+const Analysis = ({ input }) => {
   return (
     <div className="Analysis">
-
+      <label>
+        Analysis
+      </label>
     </div>
   );
 }
