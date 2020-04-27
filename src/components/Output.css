@@ -8,4 +8,6 @@
   padding-top: 1rem;
   word-wrap: break-word;
   overflow: scroll;
+  font-family: 'courier';
+  letter-spacing: 0.1rem;
 }
