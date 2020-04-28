@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { text } from '../data/english_quadgrams.txt'
+//import { text } from '../data/english_quadgrams.txt'
+import { pc_monogram } from '../data/frequencies.json'
 
 const alphabetArray = [...Array(26).keys()].map(num => String.fromCharCode(num+97));
 const quadgramDataPromise = fetch('english_quadgrams.txt')
@@ -12,11 +13,13 @@ function processRaw(rawData) {
   return Object.fromEntries(newArr);
 }
 
-console.log(text);
+//console.log(text);
 
-const Autosolver = ({input, cipherKey}) => {
+const Autosolver = ({input, cipherKey, analysis }) => {
   const [isWarned, setIsWarned] = useState(false);
   const [keyFound, setKeyFound] = useState(null);
+  const { monograms } = analysis;
+  const heuristicMatrix = getHeuristicMatrix(pc_monogram, monograms, input.length);
 
   useEffect(() => {
     console.log('Key Changed:', keyFound);
@@ -25,10 +28,14 @@ const Autosolver = ({input, cipherKey}) => {
   const handleClick = () => {
     if (isWarned) {
       autosolve(input).then(res => setKeyFound(res));
+
     } else {
       setIsWarned(true);
     }
   }
+
+  aStarAlgorithm(input, heuristicMatrix);
+  console.log(pc_monogram, monograms);
   // autosolve(input);
   return (
     <div className="Autosolver">
@@ -43,11 +50,85 @@ const Autosolver = ({input, cipherKey}) => {
 }
 
 function autosolve(input, cipherKey) {
-  // if (!cipherKey) {
-    return hillClimbingAlgorithm(input);
-  // } else {
-  //   myAlgorithm(input, cipherKey);
-  // }
+  return hillClimbingAlgorithm(input);
+  // return aStarAlgorithm(input, getMatrix(analysis));
+}
+
+/**********************
+HELPER FUNCTIONS
+**********************/
+function decipher(input, key) {
+  return input.toLowerCase().split('').map(char => key[char]).join('');
+}
+
+function objToArr(obj) {
+  return Object.entries(obj);
+}
+
+function aStarAlgorithm(input, heuristicMatrix) {
+  const genKey = () => {
+    return alphabetArray.reduce((acc, cur) => ({
+      ...acc,
+      [cur]: cur,
+    }), {});
+  }
+  // Distance from node to node
+  const getGCost = () => {
+    return 0;
+  }
+  // Distance away from end
+  const getHCost = (k, h) => {
+    const keyArr = objToArr(k);
+    const hCost = keyArr.reduce((acc, cur, ind) => {
+      const charS = cur[0].toUpperCase();
+      const charC = cur[1].toUpperCase();
+      const value = h[charS][charC];
+      return acc + value;
+    }, 0);
+    return hCost;
+  }
+
+  const key = genKey();
+  console.log(key);
+  const priority = Infinity;
+  const priorityQueue = [];
+  priorityQueue.push({key, priority});
+
+  if(priorityQueue.length) {
+    const gCost = getGCost();
+    const hCost = getHCost(key, heuristicMatrix);
+    const fCost = gCost + hCost;
+    priorityQueue.push({key, priority: fCost});
+  }
+  console.log(priorityQueue);
+}
+
+function getHeuristicMatrix(controlDataObj, sampleDataObj, length) {
+  const controlDataArr = objToArr(controlDataObj);
+  const hMatrix = controlDataArr.reduce((acc, conCur, ind) => {
+    // Mapping sampe to control
+    const expected = controlDataObj[conCur[0]] * length;
+
+    const value = controlDataArr.map(samCur => {
+      const counted = sampleDataObj[samCur[0]] * length || 0;
+      return [samCur[0], getChiSquared(expected, counted)];
+    });
+    value.forEach((item) => {
+      const char = item[0];
+      const value = item[1];
+      acc[char] = {
+        ...acc[char],
+        [conCur[0]]: value
+      }
+    });
+    return acc;
+  }, {});
+  // console.log(hMatrix);
+  return hMatrix;
+}
+
+function getChiSquared(control, sample) {
+  return ((sample - control)**2) / control;
 }
 
 async function hillClimbingAlgorithm(input) {
@@ -70,16 +151,6 @@ async function hillClimbingAlgorithm(input) {
   }
   console.log('Result:', parent, fitness);
   return parent;
-}
-
-/*
-function weightedHillClimbingAlgorithm(input, weights) {
-
-}
-*/
-
-function decipher(input, key) {
-  return input.toLowerCase().split('').map(char => key[char]).join('');
 }
 
 async function measureFitness(decipheredText) {
