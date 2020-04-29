@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 //import { text } from '../data/english_quadgrams.txt'
-import { pc_monogram } from '../data/frequencies.json'
+import { english_quadgrams } from '../data/english_quadgrams';
+import { pc_monogram } from '../data/frequencies.json';
 
 const alphabetArray = [...Array(26).keys()].map(num => String.fromCharCode(num+97));
 const quadgramDataPromise = fetch('english_quadgrams.txt')
@@ -65,7 +66,7 @@ function objToArr(obj) {
   return Object.entries(obj);
 }
 
-function aStarAlgorithm(input, heuristicMatrix) {
+async function aStarAlgorithm(input, heuristicMatrix) {
   const genKey = () => {
     return alphabetArray.reduce((acc, cur) => ({
       ...acc,
@@ -73,8 +74,8 @@ function aStarAlgorithm(input, heuristicMatrix) {
     }), {});
   }
   // Distance from node to node
-  const getGCost = () => {
-    return 0;
+  const getGCost = (k) => {
+    return measureFitness(decipher(input, k)) * -1;
   }
   // Distance away from end
   const getHCost = (k, h) => {
@@ -89,15 +90,15 @@ function aStarAlgorithm(input, heuristicMatrix) {
   }
 
   const key = genKey();
-  console.log(key);
   const priority = Infinity;
   const priorityQueue = [];
   priorityQueue.push({key, priority});
 
   if(priorityQueue.length) {
-    const gCost = getGCost();
+    const gCost = getGCost(key);
     const hCost = getHCost(key, heuristicMatrix);
     const fCost = gCost + hCost;
+    console.log('k:', key, 'g:', gCost, 'h:', hCost, 'f:', fCost);
     priorityQueue.push({key, priority: fCost});
   }
   console.log(priorityQueue);
@@ -153,9 +154,8 @@ async function hillClimbingAlgorithm(input) {
   return parent;
 }
 
-async function measureFitness(decipheredText) {
-  const quadgramData = await quadgramDataPromise;
-  const _total = Object.values(quadgramData)
+function measureFitness(decipheredText) {
+  const _total = Object.values(english_quadgrams)
     .reduce((acc, val, ind) => (Number(val)) ? acc + Number(val) : acc, 0);
   const _floorProb = 0.1/_total;
   const _logFloorProb = Math.log10(_floorProb);
@@ -165,8 +165,8 @@ async function measureFitness(decipheredText) {
     .reduce((acc, char, ind) => {
       if (ind + 4 <= length) {
         const quadFrag = decipheredText.slice(ind, ind+4).toUpperCase();
-        if (quadgramData[quadFrag]) {
-          const prob = quadgramData[quadFrag]/_total;
+        if (english_quadgrams[quadFrag]) {
+          const prob = english_quadgrams[quadFrag]/_total;
           const logProb = Math.log10(prob)
           return acc + logProb;
         } else {
