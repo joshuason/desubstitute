@@ -76,6 +76,7 @@ const App = () => {
         input={input}
         cipherKey={cipherKey}
         analysis={analysis}
+        setCipherKey={setCipherKey}
       />
     </div>
   );
